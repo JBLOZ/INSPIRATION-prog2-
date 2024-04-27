@@ -1,4 +1,4 @@
-import Inspirations
+import Inspiration
 import pickle
 import Exceptions as ex
 
