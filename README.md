@@ -1,2 +1,0 @@
-# INSPIRATION.
-trabajo inspiration 
