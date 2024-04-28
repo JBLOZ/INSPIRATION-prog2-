@@ -12,6 +12,7 @@ class User:
         self.listaSiguiendo = []
         self.listaInspirations = []
 
+
         def verificar_password(self):
             try:
                 if len(self.password) < 8:
