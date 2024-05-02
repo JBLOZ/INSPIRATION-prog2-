@@ -12,6 +12,17 @@ class User():
         self.listaSiguiendo = []
         self.listaInspirations = []
 
+    def log_in(self, nickname, password):
+        if nickname == self.nickname and password == self.password:
+            print("Inicio de sesión exitoso")
+            return True
+        else:
+            print("Nombre de usuario o contraseña incorrectos")
+            return False
+
+    def check_name(self, nombre_a_verificar):
+       if re.match(r'^[A-Z][a-z_]{3,}$', )
+
 
 
 
@@ -30,4 +41,7 @@ class User():
     def save_user(self):
         with open(archivo, 'wb') as sfile:
 
-
+"""
+def log_in(User):
+    User = User(nombre,nickname, email, password)
+    """
