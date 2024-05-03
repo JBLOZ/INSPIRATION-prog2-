@@ -1,36 +1,51 @@
 # Clase de los tweets
 import datetime as dt
-from User import User
 
-class Inspirations():
-    def __init__(self, user:User, text):
+
+class Inspiration():
+    def __init__(self, user, text):
         self.user = user
         self.text = text
         self.likes = []
         self.comments = []
         self.fecha = dt.datetime.now()
+        self.reinspirations = []
 
     # Añadir like a un inspiration
-    def add_like(self, like):
-        self.likes.append(like)
+    def add_like(self, user):
+        self.likes.append(user)
 
     # Borrar like de un inspiration
-    def delete_like(self, like):
-        if like in self.likes:
-            self.likes.remove(like)
+    def remove_like(self, user):
+        if user in self.likes:
+            self.likes.remove(user)
 
     # Añadir comentario a un inspiration
-    def add_comment(self, comment):
-        self.comments.append(comment)
+    def add_comment(self, user, comment):
+        self.comments.append((user, comment))
 
     # Borrar comentario de un inspiration
-    def delete_comment(self, comment):
-        if comment in self.comments:
-            self.comments.remove(comment)
+    def remove_comment(self, user, comment):
+        if (user, comment) in self.comments:
+            self.comments.remove((user, comment))
 
-    # Reinspiration
-    def reinspiration(self, user):
-        user.__add__(self)
+"""
+class Inspiratiion:
+    def __init__(self):
+        self.inspirations = []
+
+    def add_inspiration(self, inspiration):
+        self.inspiration.append(inspiration)
+
+    def view_inspirations(self):
+        if self.inspirations:
+            print("Inspirations:")
+            for i, inspiration in (self.inspirations):
+                print(f'{i}. {inspiration}')
+        else:
+            print("Todavía no hay inspirations.")
+            
+"""
 
         
 

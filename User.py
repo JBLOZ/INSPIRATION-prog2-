@@ -1,47 +1,96 @@
-from Inspiration import Inspiration
-import pickle as pk
+import re
+import pickle as plk
 
-archivo = ''
+archivo = 'usuarios.pickle'
 class User():
-    def __init__(self, nombre, nickname, email, password):
-        self.nombre = nombre
+    listaUsers = []
+    def __init__(self, name, nickname, email, password):
+        self.name = name
         self.nickname = nickname
         self.email = email
         self.password = password
         self.listaSeguidores = []
         self.listaSiguiendo = []
         self.listaInspirations = []
+        self.listaMisInspirations = []
 
-    def log_in(self, nickname, password):
-        if nickname == self.nickname and password == self.password:
-            print("Inicio de sesión exitoso")
-            return True
-        else:
-            print("Nombre de usuario o contraseña incorrectos")
+    def show_tweets(self):
+        pass
+
+    def check_name(self):
+        try:
+            if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
+                return True
+            else:
+
+               return False
+        except:
             return False
 
-    def check_name(self, nombre_a_verificar):
-       if re.match(r'^[A-Z][a-z_]{3,}$', )
+    def check_nickname(self):
+        if re.match(r'^[a-z0-9]{3,15}$', self.nickname):
+            return True
+        else:
+            return False
 
-
+    def check_password(self):
+        if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+            return True
+        else:
+            return False
 
 
     def __add__(self, other):
         self.listaInspirations.append(other)
 
-    def lector_usuarios(self):
-        try:
-            with open(archivo, "rb") as rfile:
-                diccionario_usuarios = pk.load(rfile)
-        except EOFError:
-            diccionario_usuarios = {}
+    def __sub__(self, other):
+        if other in User.listaUsers:
+            User.listaUsers.remove(other)
 
-        return diccionario_usuarios
+
+
+
+
 
     def save_user(self):
-        with open(archivo, 'wb') as sfile:
+        lector_usuarios()
+        with open(archivo, "wb") as wfile:
 
-"""
-def log_in(User):
-    User = User(nombre,nickname, email, password)
-    """
+            User.listaUsers.append({self.nickname: self})
+            plk.dump(User.listaUsers, wfile)
+
+    def log_in(self, nickname, password):
+        User.lector_usuarios()
+        try:
+            if nickname in User.listaUsers:
+                if User.listaUsers[nickname].password == password:
+                    return User.listaUsers[nickname]
+                else:
+                    raise ValueError('Contraseña incorrecta')
+            else:
+                raise ValueError('Usuario no encontrado')
+        except ValueError as e:
+            print(e)
+            return None
+
+
+def lector_usuarios():
+    try:
+        with open(archivo, "rb") as rfile:
+            User.listaUsers = plk.load(rfile)
+    except:
+        User.listaUsers = []
+
+
+lector_usuarios()
+print(User.listaUsers)
+
+
+
+
+
+
+
+
+
+
