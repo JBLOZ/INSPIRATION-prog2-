@@ -4,8 +4,6 @@ import pickle as plk
 archivo = 'usuarios.pickle'
 
 
-
-
 class User():
 
 
@@ -19,24 +17,20 @@ class User():
         self.listaSeguidores = []
         self.listaSiguiendo = []
         self.listaInspirations = []
-        self.listaMisInspirations = []
-        lectura_usuarios()
+        lectura_usuarios() #Lee los usuarios del archivo
         try:
-            if self.nickname in User.diccUsers.keys():
+            if self.nickname in User.diccUsers.keys(): #Comprueba si el usuario ya existe
                 raise ValueError('Usuario ya existente')
 
-            if self.check_name() and self.check_nickname() and self.check_password():
-                User.diccUsers[self.nickname] = self
-                guardar_usuarios()
+            if self.check_name() and self.check_nickname() and self.check_password(): #Comprueba que los datos sean correctos
+                User.diccUsers[self.nickname] = self #Añade el usuario al diccionario
+                guardar_usuarios() #Guarda los usuarios en el archivo
 
             else:
-                raise ValueError('Datos incorrectos')
-        except ValueError as e:
-            print(e)
+                raise ValueError('Datos incorrectos') #Si los datos son incorrectos, lanza una excepción
+        except ValueError as e: #Captura la excepción
+            print(e) #Imprime el mensaje de la excepción
 
-
-    def show_tweets(self):
-        pass
 
     def check_name(self):
         try:
@@ -92,6 +86,31 @@ class User():
             print(e)
             return None
 
+    def follow(self, other):
+        try:
+            if other.nickname in self.listaSiguiendo:
+                raise ValueError('Ya sigues a este usuario')
+            self.listaSiguiendo.append(other.nickname)
+            other.listaSeguidores.append(self.nickname)
+            User.diccUsers[self.nickname] = self
+            guardar_usuarios()
+
+        except ValueError as e:
+            print(e)
+
+
+    def unfollow(self, other):
+        try:
+            if other.nickname not in self.listaSiguiendo:
+                raise ValueError('No sigues a este usuario')
+            self.listaSiguiendo.remove(other.nickname)
+            other.listaSeguidores.remove(self.nickname)
+            User.diccUsers[self.nickname] = self
+            guardar_usuarios()
+        except ValueError as e:
+            print(e)
+
+
 def lectura_usuarios():
     try:
         with open(archivo, "rb") as rfile:
@@ -111,8 +130,6 @@ def guardar_usuarios():
 
 
 
-
-print(User.diccUsers)
 
 
 
