@@ -2,8 +2,15 @@ import re
 import pickle as plk
 
 archivo = 'usuarios.pickle'
+
+
+
+
 class User():
-    listaUsers = []
+
+
+    diccUsers = {}
+
     def __init__(self, name, nickname, email, password):
         self.name = name
         self.nickname = nickname
@@ -13,6 +20,20 @@ class User():
         self.listaSiguiendo = []
         self.listaInspirations = []
         self.listaMisInspirations = []
+        lectura_usuarios()
+        try:
+            if self.nickname in User.diccUsers.keys():
+                raise ValueError('Usuario ya existente')
+
+            if self.check_name() and self.check_nickname() and self.check_password():
+                User.diccUsers[self.nickname] = self
+                guardar_usuarios()
+
+            else:
+                raise ValueError('Datos incorrectos')
+        except ValueError as e:
+            print(e)
+
 
     def show_tweets(self):
         pass
@@ -22,68 +43,76 @@ class User():
             if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
                 return True
             else:
+                raise ValueError('Nombre incorrecto')
 
-               return False
-        except:
+        except ValueError as e:
+            print(e)
             return False
 
     def check_nickname(self):
-        if re.match(r'^[a-z0-9]{3,15}$', self.nickname):
-            return True
-        else:
+        try:
+            if re.match(r'^[a-z0-9]{3,15}$', self.nickname):
+                return True
+            else:
+                raise ValueError('Nickname incorrecto')
+        except ValueError as e:
+            print(e)
             return False
 
+
     def check_password(self):
-        if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+        try:
+            if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+                return True
+            else:
+                raise ValueError('Contraseña incorrecta')
+        except ValueError as e:
+            print(e)
             return True
-        else:
-            return False
 
 
     def __add__(self, other):
         self.listaInspirations.append(other)
 
     def __sub__(self, other):
-        if other in User.listaUsers:
-            User.listaUsers.remove(other)
+        self.listaInspirations.remove(other)
 
 
 
-
-
-
-    def save_user(self):
-        lector_usuarios()
-        with open(archivo, "wb") as wfile:
-
-            User.listaUsers.append({self.nickname: self})
-            plk.dump(User.listaUsers, wfile)
 
     def log_in(self, nickname, password):
-        User.lector_usuarios()
+
         try:
-            if nickname in User.listaUsers:
-                if User.listaUsers[nickname].password == password:
-                    return User.listaUsers[nickname]
-                else:
-                    raise ValueError('Contraseña incorrecta')
+            if User.diccUsers[nickname].password == password:
+                return User.diccUsers[nickname]
+
             else:
-                raise ValueError('Usuario no encontrado')
+                raise ValueError('Contraseña incorrecta')
         except ValueError as e:
             print(e)
             return None
 
-
-def lector_usuarios():
+def lectura_usuarios():
     try:
         with open(archivo, "rb") as rfile:
-            User.listaUsers = plk.load(rfile)
-    except:
-        User.listaUsers = []
+            User.diccUsers = plk.load(rfile)
+    except EOFError:
+        print('Archivo vacío')
+    except Exception as e:
+        print(e)
 
 
-lector_usuarios()
-print(User.listaUsers)
+def guardar_usuarios():
+    try:
+        with open(archivo, "wb") as wfile:
+            plk.dump(User.diccUsers, wfile)
+    except Exception as e:
+        print(e)
+
+
+
+
+print(User.diccUsers)
 
 
 
