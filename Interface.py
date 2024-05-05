@@ -1,6 +1,60 @@
+import tkinter
+import Data as d
 from tkinter import Tk, Label, Entry, Frame, messagebox, mainloop, Button
 from PIL import ImageTk, Image
-from app import Entrar
+
+
+class Principal:
+    def __init__(self):
+        self.ventana = Tk()
+        self.ventana.geometry('500x700')
+
+        fondo = 'lightsalmon'
+
+        self.frame_superior = Frame(self.ventana)
+        self.frame_superior.configure(background=fondo)
+        self.frame_superior.pack(fill='both', expand=True)
+
+        self.frame_inferior = Frame(self.ventana)
+        self.frame_inferior.configure(background=fondo)
+        self.frame_inferior.pack(fill='both', expand=True)
+
+        self.frame_superior.columnconfigure(0, weight=1)
+        self.frame_inferior.columnconfigure(1, weight=1)
+
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((175, 215))
+        self.render = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frame_superior, image=self.render, bg=fondo)
+        self.fondo.pack(expand=True, fill='both')
+
+        self.boton_iniciar = Button(self.frame_inferior,
+                            text = 'Iniciar Sesión',
+                            width = 16,
+                            font = ('Times',12),
+                            bg = 'tomato',
+                            fg = '#fff',
+                            command = self.abrir_iniciar)
+        self.boton_iniciar.grid(row=0, column=0, pady=35, sticky='e')
+        self.boton_iniciar.place(relx=0.5,rely=0.3,anchor=tkinter.CENTER)
+
+        self.boton_reg = Button(self.frame_inferior,
+                                    text='Registrarse',
+                                    width=16,
+                                    font=('Times', 12),
+                                    bg='tomato',
+                                    fg='#fff',
+                                    )
+
+        self.boton_reg.grid(row=1, column=0, pady=35, sticky='e')
+        self.boton_reg.place(relx=0.5,rely=0.5,anchor=tkinter.CENTER)
+
+        mainloop()
+
+    def abrir_iniciar(self):
+        self.ventana.destroy()
+        Login()
+
 class Login:
     def __init__(self):
         self.ventana = Tk()
@@ -24,7 +78,7 @@ class Login:
 
         #PARTE DE TÍTULO
         self.titulo = Label(self.frame_superior,     #Crea una etiqueta en la parte superior de la pantalla
-                            text = 'ERES PERFECTA!',          #texto que aparece en la parte superior
+                            text = 'INSPIRATION',          #texto que aparece en la parte superior
                             font = ('Times', 36, 'bold'), #la fuente del texto y demas
                             bg = fondo               #Color del fondo
                             )
@@ -34,7 +88,7 @@ class Login:
 
         #PARTE IMAGENES
         self.img = Image.open('imagen2.PNG')   #lee la imagen
-        self.img = self.img.resize((400, 400))  #tamaño de la imagen
+        self.img = self.img.resize((175, 215))  #tamaño de la imagen
         self.render = ImageTk.PhotoImage(self.img) #carga la imagen y muestra la imagen como una etiqueta
         self.fondo = Label(self.frame_superior, image = self.render, bg = fondo) #Crea una etiqueta en la que indica lo que ha de verse en la parte superior de la interfaz
         self.fondo.pack(expand=True, fill = 'both') #lo de antes
@@ -53,7 +107,7 @@ class Login:
 
 
         self.entry_usuario= Entry(self.frame_inferior,  #Se crea un widget de entrada en la parte inferior
-                                  bd=0,                 #grosor del borde de la entrada
+                                  bd=2,                 #grosor del borde de la entrada
                                   width = 14,           #ancho de entrada de caracteres
                                   bg='RosyBrown2',
                                   font = ('Times', 18))
@@ -70,7 +124,7 @@ class Login:
         self.label_contraseña.grid(row = 1, column = 0, pady = 10, sticky = 'e') #pady = margen de la y
 
         self.entry_contraseña = Entry(self.frame_inferior,
-                                      bd = 0,
+                                      bd = 2,
                                       width = 14,
                                       font = ('Times', 18),
                                       bg = 'RosyBrown2',
@@ -84,22 +138,59 @@ class Login:
                             font = ('Times',12),
                             bg = 'tomato',
                             fg = '#fff',
-                            command = self.verificar)
+                            command = self.acceso)
 
         self.boton.grid(row = 2, column = 1, pady = 35, sticky = 'w')
 
         mainloop()
 
 
-    def verificar(self):
-        nombre = self.entry_usuario.get()
-        contra = self.entry_contraseña.get()
+    def acceso(self):
+        try:
+            nombre = self.entry_usuario.get()
+            contra = self.entry_contraseña.get()
 
-        if nombre == 'elena' and contra == '123':
-            self.ventana.destroy()
-            Entrar()
-        else:
-            messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
+            d.diccUsers = d.lectura_usuarios()
+            if nombre in d.diccUsers:  # Verifica que el usuario exista
+                if contra == d.diccUsers[nombre].password:
+                    self.ventana.destroy()
+                    Entrar()
+                else:
+                    raise ValueError('Datos incorrectos')
+            else:
+                raise ValueError('Usuario no encontrado')
+        except ValueError as e:
+                messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
+                print(e)
 
 
-Login()
+
+
+class Entrar():
+    def __init__(self):
+        self.ventana = Tk()
+        self.ventana.geometry('700x700')
+
+        fondo = 'lightsalmon'
+
+        self.frame_superior = Frame(self.ventana)
+        self.frame_superior.configure(background=fondo)
+        self.frame_superior.pack(fill='both', expand=True)
+
+        self.frame_inferior = Frame(self.ventana)
+        self.frame_inferior.configure(background=fondo)
+        self.frame_inferior.pack(fill='both', expand=True)
+
+        self.frame_superior.columnconfigure(0, weight=1)
+        self.frame_inferior.columnconfigure(1, weight=1)
+
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((150, 200))
+        self.cargar = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frame_superior, image=self.cargar, bg=fondo)
+        self.fondo.pack(expand=True, fill='both')
+
+        mainloop()
+
+
+Principal()

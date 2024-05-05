@@ -1,15 +1,10 @@
 import re
-import pickle as plk
-
-archivo = 'usuarios.pickle'
+import Data as d
 
 
-class User():
+class User:
 
-
-    diccUsers = {}
-
-    def __init__(self, name, nickname, email, password):
+    def __init__(self, name=None, nickname=None, email=None, password=None):
         self.name = name
         self.nickname = nickname
         self.email = email
@@ -17,19 +12,20 @@ class User():
         self.listaSeguidores = []
         self.listaSiguiendo = []
         self.listaInspirations = []
-        lectura_usuarios() #Lee los usuarios del archivo
-        try:
-            if self.nickname in User.diccUsers.keys(): #Comprueba si el usuario ya existe
-                raise ValueError('Usuario ya existente')
+        d.diccUsers = d.lectura_usuarios() #Lee los usuarios del archivo y los guarda en el diccionario
+        if not (self.nickname == None and self.password == None and self.email == None and self.name == None):
+            try:
+                if self.nickname in d.diccUsers.keys(): #Comprueba si el usuario ya existe
+                    raise ValueError('Usuario ya existente')
 
-            if self.check_name() and self.check_nickname() and self.check_password(): #Comprueba que los datos sean correctos
-                User.diccUsers[self.nickname] = self #Añade el usuario al diccionario
-                guardar_usuarios() #Guarda los usuarios en el archivo
+                if self.check_name() and self.check_nickname() and self.check_password(): #Comprueba que los datos sean correctos
+                    d.diccUsers[self.nickname] = self #Añade el usuario al diccionario
+                    d.guardar_usuarios() #Guarda los usuarios en el archivo
 
-            else:
-                raise ValueError('Datos incorrectos') #Si los datos son incorrectos, lanza una excepción
-        except ValueError as e: #Captura la excepción
-            print(e) #Imprime el mensaje de la excepción
+                else:
+                    raise ValueError('Datos incorrectos') #Si los datos son incorrectos, lanza una excepción
+            except ValueError as e: #Captura la excepción
+                print(e) #Imprime el mensaje de la excepción
 
 
     def check_name(self):
@@ -77,8 +73,8 @@ class User():
     def log_in(self, nickname, password):
 
         try:
-            if User.diccUsers[nickname].password == password:
-                return User.diccUsers[nickname]
+            if d.diccUsers[nickname].password == password:
+                return d.diccUsers[nickname]
 
             else:
                 raise ValueError('Contraseña incorrecta')
@@ -92,8 +88,8 @@ class User():
                 raise ValueError('Ya sigues a este usuario')
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
-            User.diccUsers[self.nickname] = self
-            guardar_usuarios()
+            d.diccUsers[self.nickname] = self
+            d.guardar_usuarios()
 
         except ValueError as e:
             print(e)
@@ -105,28 +101,12 @@ class User():
                 raise ValueError('No sigues a este usuario')
             self.listaSiguiendo.remove(other.nickname)
             other.listaSeguidores.remove(self.nickname)
-            User.diccUsers[self.nickname] = self
-            guardar_usuarios()
+            d.diccUsers[self.nickname] = self
+            d.guardar_usuarios()
         except ValueError as e:
             print(e)
 
 
-def lectura_usuarios():
-    try:
-        with open(archivo, "rb") as rfile:
-            User.diccUsers = plk.load(rfile)
-    except EOFError:
-        print('Archivo vacío')
-    except Exception as e:
-        print(e)
-
-
-def guardar_usuarios():
-    try:
-        with open(archivo, "wb") as wfile:
-            plk.dump(User.diccUsers, wfile)
-    except Exception as e:
-        print(e)
 
 
 
