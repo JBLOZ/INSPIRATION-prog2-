@@ -108,7 +108,7 @@ class Data:
             print(e)
 
 if __name__ == '__main__':
-    Data.diccUsers = Data().lectura_usuarios()
+    Data().lectura_usuarios()
 
     print(Data.diccUsers)
 
