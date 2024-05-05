@@ -1,9 +1,7 @@
 import re
-import Data as d
-
+import pickle as plk
 
 class User:
-
     def __init__(self, name=None, nickname=None, email=None, password=None):
         self.name = name
         self.nickname = nickname
@@ -12,20 +10,6 @@ class User:
         self.listaSeguidores = []
         self.listaSiguiendo = []
         self.listaInspirations = []
-        d.diccUsers = d.lectura_usuarios() #Lee los usuarios del archivo y los guarda en el diccionario
-        if not (self.nickname == None and self.password == None and self.email == None and self.name == None):
-            try:
-                if self.nickname in d.diccUsers.keys(): #Comprueba si el usuario ya existe
-                    raise ValueError('Usuario ya existente')
-
-                if self.check_name() and self.check_nickname() and self.check_password(): #Comprueba que los datos sean correctos
-                    d.diccUsers[self.nickname] = self #Añade el usuario al diccionario
-                    d.guardar_usuarios() #Guarda los usuarios en el archivo
-
-                else:
-                    raise ValueError('Datos incorrectos') #Si los datos son incorrectos, lanza una excepción
-            except ValueError as e: #Captura la excepción
-                print(e) #Imprime el mensaje de la excepción
 
 
     def check_name(self):
@@ -34,7 +18,6 @@ class User:
                 return True
             else:
                 raise ValueError('Nombre incorrecto')
-
         except ValueError as e:
             print(e)
             return False
@@ -49,7 +32,6 @@ class User:
             print(e)
             return False
 
-
     def check_password(self):
         try:
             if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
@@ -58,8 +40,7 @@ class User:
                 raise ValueError('Contraseña incorrecta')
         except ValueError as e:
             print(e)
-            return True
-
+            return False
 
     def __add__(self, other):
         self.listaInspirations.append(other)
@@ -67,15 +48,12 @@ class User:
     def __sub__(self, other):
         self.listaInspirations.remove(other)
 
-
-
-
     def log_in(self, nickname, password):
-
         try:
-            if d.diccUsers[nickname].password == password:
-                return d.diccUsers[nickname]
-
+            if nickname not in Data().diccUsers:
+                raise ValueError('El usuario no existe')
+            elif Data().diccUsers[nickname].password == password:
+                return Data().diccUsers[nickname]
             else:
                 raise ValueError('Contraseña incorrecta')
         except ValueError as e:
@@ -88,12 +66,10 @@ class User:
                 raise ValueError('Ya sigues a este usuario')
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
-            d.diccUsers[self.nickname] = self
-            d.guardar_usuarios()
-
+            Data().diccUsers[self.nickname] = self
+            Data().guardar_usuarios()
         except ValueError as e:
             print(e)
-
 
     def unfollow(self, other):
         try:
@@ -101,12 +77,40 @@ class User:
                 raise ValueError('No sigues a este usuario')
             self.listaSiguiendo.remove(other.nickname)
             other.listaSeguidores.remove(self.nickname)
-            d.diccUsers[self.nickname] = self
-            d.guardar_usuarios()
+            Data().diccUsers[self.nickname] = self
+            Data().guardar_usuarios()
         except ValueError as e:
             print(e)
 
+class Data:
 
+    archivo = 'usuarios.pickle'
+    diccUsers = {}
+    def __init__(self):
+        pass
+
+
+    def lectura_usuarios(self):
+        try:
+            with open(Data.archivo, "rb") as rfile:
+                Data.diccUsers = plk.load(rfile)
+        except (EOFError, FileNotFoundError):
+            print('Archivo vacío o no encontrado. Inicializando diccionario vacío...')
+            Data.diccUsers = {}
+        except Exception as e:
+            print(e)
+
+    def guardar_usuarios(self):
+        try:
+            with open(Data.archivo, "wb") as wfile:
+                plk.dump(Data.diccUsers, wfile)
+        except Exception as e:
+            print(e)
+
+if __name__ == '__main__':
+    Data.diccUsers = Data().lectura_usuarios()
+
+    print(Data.diccUsers)
 
 
 
