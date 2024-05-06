@@ -24,7 +24,7 @@ class User:
 
     def check_nickname(self):
         try:
-            if re.match(r'^[a-z0-9]{3,15}$', self.nickname):
+            if re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
                 return True
             else:
                 raise ValueError('Nickname incorrecto')
@@ -38,6 +38,16 @@ class User:
                 return True
             else:
                 raise ValueError('Contraseña incorrecta')
+        except ValueError as e:
+            print(e)
+            return False
+
+    def check_email(self):
+        try:
+            if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.password):
+                return True
+            else:
+                raise ValueError('Email incorrecto')
         except ValueError as e:
             print(e)
             return False

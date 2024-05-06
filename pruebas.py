@@ -148,7 +148,12 @@ class Registrarse:
         elif User().check_nickname(user) != True:
             messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
 
+        elif User().check_email(user) != True:
+            messagebox.showinfo('Acceso incorrecto', 'Email no válido')
+
         elif User().check_password(contra) != True:
             messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
 
-        else
+        else:
+            usu = User(self.nombre, self.user, self.email, self.password)
+            User.guardar_usuario(usu)

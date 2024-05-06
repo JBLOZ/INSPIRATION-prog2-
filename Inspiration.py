@@ -29,6 +29,8 @@ class Inspiration():
         if (user, comment) in self.comments:
             self.comments.remove((user, comment))
 
+
+
 """
 class Inspiratiion:
     def __init__(self):

@@ -352,6 +352,8 @@ class Registrarse:
         else:
             Data.diccUsers[user] = AVerificar
             Data().guardar_usuarios()
+            print(Data.diccUsers)
+
             messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
             self.ventana.destroy()
             Principal()
@@ -360,4 +362,6 @@ Data().lectura_usuarios()
 print(Data.diccUsers)
 for i in Data.diccUsers:
     print(Data.diccUsers[i].password)
+
+
 Principal()
