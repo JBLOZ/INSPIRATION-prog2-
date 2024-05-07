@@ -338,6 +338,7 @@ class Registrarse:
         user = self.entrar_usu.get()
         email = self.entrar_email.get()
         contra = self.entrar_contraseña.get()
+        edad = self.entrar_edad.get()
 
         AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
 
@@ -347,8 +348,23 @@ class Registrarse:
         elif not(AVerificar.check_nickname()):
             messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
 
+        elif edad.isdigit() == False:
+            messagebox.showinfo('Acceso incorrecto', 'Edad no válida')
+
+        elif int(edad) < 14:
+            messagebox.showinfo('Acceso incorrecto', 'Debes ser mayor de 14 años')
+            self.ventana.destroy()
+
+        elif not(AVerificar.check_email()):
+            messagebox.showinfo('Acceso incorrecto', 'Email no válido')
+
+
+
         elif not(AVerificar.check_password()):
             messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
+
+
+
         else:
             Data.diccUsers[user] = AVerificar
             Data().guardar_usuarios()

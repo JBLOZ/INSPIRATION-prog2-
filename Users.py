@@ -24,7 +24,7 @@ class User:
 
     def check_nickname(self):
         try:
-            if re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
+            if re.match(r'^[a-zA-Z0-9_-]{3,15}$', self.nickname):
                 return True
             else:
                 raise ValueError('Nickname incorrecto')
@@ -34,7 +34,7 @@ class User:
 
     def check_password(self):
         try:
-            if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+            if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_.])[A-Za-z\d@$!%*?&_.]{8,20}$', self.password):
                 return True
             else:
                 raise ValueError('Contraseña incorrecta')
@@ -44,7 +44,7 @@ class User:
 
     def check_email(self):
         try:
-            if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.password):
+            if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email):
                 return True
             else:
                 raise ValueError('Email incorrecto')
@@ -54,9 +54,15 @@ class User:
 
     def __add__(self, other):
         self.listaInspirations.append(other)
+        Data.diccUsers[self.nickname] = self
+        Data().guardar_usuarios()
+
 
     def __sub__(self, other):
         self.listaInspirations.remove(other)
+        Data.diccUsers[self.nickname] = self
+        Data().guardar_usuarios()
+
 
     def log_in(self, nickname, password):
         try:
@@ -76,7 +82,7 @@ class User:
                 raise ValueError('Ya sigues a este usuario')
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
-            Data().diccUsers[self.nickname] = self
+            Data.diccUsers[self.nickname] = self
             Data().guardar_usuarios()
         except ValueError as e:
             print(e)
@@ -87,10 +93,12 @@ class User:
                 raise ValueError('No sigues a este usuario')
             self.listaSiguiendo.remove(other.nickname)
             other.listaSeguidores.remove(self.nickname)
-            Data().diccUsers[self.nickname] = self
+            Data.diccUsers[self.nickname] = self
             Data().guardar_usuarios()
         except ValueError as e:
             print(e)
+
+
 
 class Data:
 
