@@ -1,7 +1,7 @@
 import re
 import pickle as plk
 import Exceptions as ex
-
+from Inspiration import Inspiration
 class User:
     def __init__(self, name=None, nickname=None, email=None, password=None):
         self.name = name
@@ -16,25 +16,29 @@ class User:
         if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
             return True
         else:
-            raise InvalidNameError()
+            pass
+          #  raise InvalidNameError()
 
     def check_nickname(self):
         if re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
             return True
         else:
-            raise ex.InvalidNicknameError()
+            pass
+          #  raise ex.InvalidNicknameError()
 
     def check_password(self):
         if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
             return True
         else:
-            raise ex.InvalidPasswordError()
+            pass
+         #   raise ex.InvalidPasswordError()
 
     def check_email(self):
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email):
             return True
         else:
-            raise ex.InvalidEmailError()
+            pass
+         #   raise ex.InvalidEmailError()
 
     def __add__(self, other):
         self.listaInspirations.append(other)
@@ -47,21 +51,12 @@ class User:
         Data.diccUsers[self.nickname] = self
         Data().guardar_usuarios()
 
-    def log_in(self, nickname, password):
-        try:
-            if nickname not in Data.diccUsers:
-                raise ex.UserNotFoundError()
-            elif Data.diccUsers[nickname].password == password:
-                return Data.diccUsers[nickname]
-            else:
-                raise InvalidPasswordError()
-        except (ex.UserNotFoundError, ex.InvalidPasswordError) as e:
-            return None
 
     def follow(self, other):
         try:
             if other.nickname in self.listaSiguiendo:
-                raise AlreadyFollowingError()
+                pass
+              #  raise AlreadyFollowingError()
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
             Data.diccUsers[self.nickname] = self
@@ -80,9 +75,11 @@ class User:
         except ex.NotFollowingError as e:
             pass
 
-    def create_inspiration(current_user, text):
-        new_inspiration = Inspiration(current_user, text)
-        current_user.listaInspirations.append(new_inspiration)
+    def create_inspiration(self, text):
+        new_inspiration = Inspiration(self, text)
+
+        Data.diccUsers[self.nickname].listaInspirations.append(new_inspiration)
+        Data().guardar_usuarios()
 
     def show_inspirations(current_user):
         user_inspirations = current_user.listaInspirations
