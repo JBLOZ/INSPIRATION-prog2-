@@ -3,6 +3,7 @@ from tkinter import Tk, Label, Entry, Frame, messagebox, mainloop, Button
 from PIL import ImageTk, Image
 from Users import User, Data
 
+Data().lectura_usuarios()
 
 class Principal:
     def __init__(self):
@@ -127,7 +128,7 @@ class Login:
                              font=('Times', 12),
                              bg='tomato',
                              fg='#fff',
-                             command = self.verificar )
+                             command = self.acceso )
 
         self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
@@ -135,8 +136,8 @@ class Login:
 
     def acceso(self):
         try:
-            nombre = self.entry_usuario.get()
-            contra = self.entry_contraseña.get()
+            nombre = self.entradas[0].get()
+            contra = self.entradas[1].get()
             Data().lectura_usuarios()
             if nombre in Data.diccUsers:  # Verifica que el usuario exista
                 if contra == Data.diccUsers[nombre].password:
@@ -144,8 +145,10 @@ class Login:
                     Entrar()
                 else:
                     raise ValueError('Datos incorrectos')
+                    messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
             else:
                 raise ValueError('Usuario no encontrado')
+                messagebox.showinfo('Acceso incorrecto', 'Usuario no encontrado')
 
         except ValueError as e:
             messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
@@ -327,11 +330,6 @@ class Entrar:
             self.botones.append(self.boton)
 
         mainloop()
-
-Data().lectura_usuarios()
-print(Data.diccUsers)
-for i in Data.diccUsers:
-    print(Data.diccUsers[i].password)
 
 
 Principal()
