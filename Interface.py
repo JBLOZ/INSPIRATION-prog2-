@@ -348,7 +348,7 @@ class Escribir():
         self.usuario = usuario
         self.ventana = Tk()
 
-        self.texto = ScrolledText(self.ventana,
+        self.texto = (ScrolledText(self.ventana,
                                   width= 48,
                                   height= 10,
                                   wrap = 'word',
@@ -356,7 +356,8 @@ class Escribir():
                                   fg = 'black',
                                   padx = 40,
                                   pady = 30,
-                                  font= ('Helvetica', 12)).pack()
+                                  font= ('Helvetica', 12)))
+        self.texto.pack()
 
         self.img = Image.open('imagen2.png')
         self.img = self.img.resize((25, 25))
@@ -380,15 +381,16 @@ class Escribir():
 
         mainloop()
     def publicar(self):
-        self.usuario.create_inspiration(self.texto)
+        self.usuario.create_inspiration(self.texto.get("1.0", tkinter.END).strip())
         Data().guardar_usuarios()
         self.ventana.destroy()
         Entrar(self.usuario)
 
-
+Data().lectura_usuarios()
+print(Data.diccUsers['jord'].password)
 Principal()
 
-Data().lectura_usuarios()
+
 print(Data.diccUsers['jord'].listaInspirations[0].text)
 
 
