@@ -128,7 +128,7 @@ class Data:
 if __name__ == '__main__':
     Data().lectura_usuarios()
 
-    print(Data.diccUsers)
+    print(Data.diccUsers['jord'].name, Data.diccUsers['jord'].nickname, Data.diccUsers['jord'].email, Data.diccUsers['jord'].password)
 
 
 
