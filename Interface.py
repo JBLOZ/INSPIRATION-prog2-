@@ -1,8 +1,12 @@
 import tkinter
 from tkinter import Tk, Label, Entry, Frame, messagebox, mainloop, Button
+from tkinter.scrolledtext import ScrolledText
 from PIL import ImageTk, Image
 from Users import User, Data
+from Inspiration import Inspiration
 
+
+Data().lectura_usuarios()
 
 class Principal:
     def __init__(self):
@@ -127,7 +131,7 @@ class Login:
                              font=('Times', 12),
                              bg='tomato',
                              fg='#fff',
-                             command = self.verificar )
+                             command = self.acceso )
 
         self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
@@ -135,17 +139,21 @@ class Login:
 
     def acceso(self):
         try:
-            nombre = self.entry_usuario.get()
-            contra = self.entry_contraseña.get()
+            nombre = self.entradas[0].get()
+            contra = self.entradas[1].get()
             Data().lectura_usuarios()
             if nombre in Data.diccUsers:  # Verifica que el usuario exista
                 if contra == Data.diccUsers[nombre].password:
+
                     self.ventana.destroy()
-                    Entrar()
+                    userAct = Data.diccUsers[nombre]
+                    Entrar(userAct)
                 else:
                     raise ValueError('Datos incorrectos')
+                    messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
             else:
                 raise ValueError('Usuario no encontrado')
+                messagebox.showinfo('Acceso incorrecto', 'Usuario no encontrado')
 
         except ValueError as e:
             messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
@@ -205,52 +213,53 @@ class Registrarse:
                              width=14,
                              font=('Times', 12),
                              bg='tomato',
-                             fg='#fff')
+                             fg='#fff',
+                             command = self.verificar)
 
         self.boton3.grid(row=6, column=0, columnspan=2, pady=20)
 
         mainloop()
 
-        def verificar(self):
+    def verificar(self):
+        nombre = self.entradas[0].get()
+        user = self.entradas[1].get()
+        edad = self.entradas[2].get()
+        email = self.entradas[3].get()
+        contra = self.entradas[4].get()
 
-            nombre = self.entrar_nombre.get()
-            user = self.entrar_usu.get()
-            email = self.entrar_email.get()
-            contra = self.entrar_contraseña.get()
-            edad = self.entrar_edad.get()
 
-            AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
+        AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
 
-            if not(AVerificar.check_name()):
-                messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
+        if not(AVerificar.check_name()):
+            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
 
-            elif not(AVerificar.check_nickname()):
-                messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
+        elif not(AVerificar.check_nickname()):
+            messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
 
-            elif edad.isdigit() == False:
-                messagebox.showinfo('Acceso incorrecto', 'Edad no válida')
+        elif edad.isdigit() == False:
+            messagebox.showinfo('Acceso incorrecto', 'Edad no válida')
 
-            elif int(edad) < 14:
-                messagebox.showinfo('Acceso incorrecto', 'Debes ser mayor de 14 años')
-                self.ventana.destroy()
+        elif int(edad) < 14:
+            messagebox.showinfo('Acceso incorrecto', 'Debes ser mayor de 14 años')
+            self.ventana.destroy()
 
-            elif not(AVerificar.check_email()):
-                messagebox.showinfo('Acceso incorrecto', 'Email no válido')
+        elif not(AVerificar.check_email()):
+            messagebox.showinfo('Acceso incorrecto', 'Email no válido')
 
-            elif not(AVerificar.check_password()):
-                messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
+        elif not(AVerificar.check_password()):
+            messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
 
-            else:
-                Data.diccUsers[user] = AVerificar
-                Data().guardar_usuarios()
-                print(Data.diccUsers)
-
-                messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
-                self.ventana.destroy()
-                Entrar()
+        else:
+            Data.diccUsers[user] = AVerificar
+            Data().guardar_usuarios()
+            messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
+            self.ventana.destroy()
+            Entrar(AVerificar)
 
 class Entrar:
-    def __init__(self):
+    def __init__(self, usuario):
+
+        self.usuario = usuario
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')
@@ -263,7 +272,7 @@ class Entrar:
             self.frame.pack(fill='both', expand=True)
             self.frames.append(self.frame)
 
-        for i in range(3):
+        for i in range(4):
             self.frames[0].rowconfigure(i, weight=1)
             self.frames[0].columnconfigure(i, weight=1)
 
@@ -280,7 +289,7 @@ class Entrar:
 
         # Insertar título
         self.titulo = Label(self.frames[0],
-                            text=f'Elena ',
+                            text= usuario.name,
                             font=('Times', 40, 'bold'),
                             bg=fondo,
                             fg='lightsalmon')
@@ -288,14 +297,14 @@ class Entrar:
 
         # Insertar subtítulo
         self.subtitulo = Label(self.frames[0],
-                               text='@elena333',
+                               text=f'@{usuario.nickname}',
                                font=('Times', 15),
                                bg=fondo,
                                fg='lightsalmon')
         self.subtitulo.grid(row=1, column=0, padx=10, pady=5, columnspan = 2)
 
         # Etiquetas números
-        self.lista_num = ['110', '1365']  # poner los numeros correspondientes de cada usuario
+        self.lista_num = [len(usuario.listaSiguiendo),len(usuario.listaSeguidores)]  # poner los numeros correspondientes de cada usuario
         self.lista_etiq = ['Seguidos', 'Seguidores']
         self.etiquetas = []
 
@@ -312,8 +321,8 @@ class Entrar:
 
         # Botones
         self.botones = []
-        self.nom_bot = ['Mis inspirations', 'Inspirations', 'Buscar persona']
-        for i in range(3):
+        self.nom_bot = ['Crear Inspiration','Mis Inspirations', 'Inspirations', 'Buscar persona']
+        for i in range(4):
             self.boton = Button(self.frames[1],
                                 text=self.nom_bot[i],
                                 width=20,
@@ -321,17 +330,72 @@ class Entrar:
                                 bd = 1,
                                 font=('Times', 18),
                                 bg='lightcoral',
-                                fg='#fff')
+                                fg='#fff',
+                                command = self.escribir_boton if i==0 else None)
             # Ajuste del padding para mayor proximidad entre botones
             self.boton.grid(row=i, column=0, columnspan=2, padx=5, pady=2)
             self.botones.append(self.boton)
 
         mainloop()
 
-Data().lectura_usuarios()
-print(Data.diccUsers)
-for i in Data.diccUsers:
-    print(Data.diccUsers[i].password)
+    def escribir_boton(self):
+        self.ventana.destroy()
+        Escribir(self.usuario)
+
+class Escribir():
+    def __init__(self, usuario):
+
+        self.usuario = usuario
+        self.ventana = Tk()
+
+        self.texto = ScrolledText(self.ventana,
+                                  width= 48,
+                                  height= 10,
+                                  wrap = 'word',
+                                  bg = 'white',
+                                  fg = 'black',
+                                  padx = 40,
+                                  pady = 30,
+                                  font= ('Helvetica', 12)).pack()
+
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((25, 25))
+        self.cargar = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.ventana, image=self.cargar, bg='white')
+        self.fondo.pack(expand=True, fill='both', side='left')
+        self.fondo.place(x=0, y=1)
+
+        #boton
+        self.boton_publicar = Button(self.ventana,
+                                     text = 'Publicar',
+                                     width = 10,
+                                     font = ('Helvetica', 12),
+                                     bg = 'lightsalmon',
+                                     fg = 'white',
+                                     command = self.publicar)
+
+        self.boton_publicar.pack(expand=True,side='right' )
+        self.fondo.place(x=0, y=1)
+
+
+        mainloop()
+    def publicar(self):
+        self.usuario.create_inspiration(self.texto)
+        Data().guardar_usuarios()
+        self.ventana.destroy()
+        Entrar(self.usuario)
 
 
 Principal()
+
+Data().lectura_usuarios()
+print(Data.diccUsers['jord'].listaInspirations[0].text)
+
+
+
+
+
+
+
+
+
