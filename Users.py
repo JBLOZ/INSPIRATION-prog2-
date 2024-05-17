@@ -1,5 +1,6 @@
 import re
 import pickle as plk
+import Exceptions as ex
 
 class User:
     def __init__(self, name=None, nickname=None, email=None, password=None):
@@ -11,46 +12,29 @@ class User:
         self.listaSiguiendo = []
         self.listaInspirations = []
 
-
     def check_name(self):
-        try:
-            if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
-                return True
-            else:
-                raise ValueError('Nombre incorrecto')
-        except ValueError as e:
-            print(e)
-            return False
+        if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
+            return True
+        else:
+            raise InvalidNameError()
 
     def check_nickname(self):
-        try:
-            if re.match(r'^[a-zA-Z0-9_-]{3,15}$', self.nickname):
-                return True
-            else:
-                raise ValueError('Nickname incorrecto')
-        except ValueError as e:
-            print(e)
-            return False
+        if re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
+            return True
+        else:
+            raise ex.InvalidNicknameError()
 
     def check_password(self):
-        try:
-            if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_.])[A-Za-z\d@$!%*?&_.]{8,20}$', self.password):
-                return True
-            else:
-                raise ValueError('Contraseña incorrecta')
-        except ValueError as e:
-            print(e)
-            return False
+        if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+            return True
+        else:
+            raise ex.InvalidPasswordError()
 
     def check_email(self):
-        try:
-            if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email):
-                return True
-            else:
-                raise ValueError('Email incorrecto')
-        except ValueError as e:
-            print(e)
-            return False
+        if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email):
+            return True
+        else:
+            raise ex.InvalidEmailError()
 
     def __add__(self, other):
         self.listaInspirations.append(other)
@@ -63,40 +47,56 @@ class User:
         Data.diccUsers[self.nickname] = self
         Data().guardar_usuarios()
 
-
     def log_in(self, nickname, password):
         try:
-            if nickname not in Data().diccUsers:
-                raise ValueError('El usuario no existe')
-            elif Data().diccUsers[nickname].password == password:
-                return Data().diccUsers[nickname]
+            if nickname not in Data.diccUsers:
+                raise ex.UserNotFoundError()
+            elif Data.diccUsers[nickname].password == password:
+                return Data.diccUsers[nickname]
             else:
-                raise ValueError('Contraseña incorrecta')
-        except ValueError as e:
-            print(e)
+                raise InvalidPasswordError()
+        except (ex.UserNotFoundError, ex.InvalidPasswordError) as e:
             return None
 
     def follow(self, other):
         try:
             if other.nickname in self.listaSiguiendo:
-                raise ValueError('Ya sigues a este usuario')
+                raise AlreadyFollowingError()
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
             Data.diccUsers[self.nickname] = self
             Data().guardar_usuarios()
-        except ValueError as e:
-            print(e)
+        except ex.AlreadyFollowingError as e:
+            pass
 
     def unfollow(self, other):
         try:
             if other.nickname not in self.listaSiguiendo:
-                raise ValueError('No sigues a este usuario')
+                raise ex.NotFollowingError()
             self.listaSiguiendo.remove(other.nickname)
             other.listaSeguidores.remove(self.nickname)
             Data.diccUsers[self.nickname] = self
             Data().guardar_usuarios()
-        except ValueError as e:
-            print(e)
+        except ex.NotFollowingError as e:
+            pass
+
+    def create_inspiration(current_user, text):
+        new_inspiration = Inspiration(current_user, text)
+        current_user.listaInspirations.append(new_inspiration)
+
+    def show_inspirations(current_user):
+        user_inspirations = current_user.listaInspirations
+        for followed_user in current_user.listaSiguiendo:
+            user_inspirations.extend(followed_user.listaInspirations)
+
+        unique_inspirations = []
+        for inspiration in user_inspirations:
+            if inspiration not in unique_inspirations:
+                unique_inspirations.append(inspiration)
+
+        sorted_inspirations = sorted(unique_inspirations, key=lambda x: x.date_published)
+
+        return sorted_inspirations
 
 
 

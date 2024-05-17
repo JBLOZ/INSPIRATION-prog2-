@@ -8,44 +8,57 @@ class Principal:
     def __init__(self):
         self.ventana = Tk()
         self.ventana.geometry('500x700')
+        self.ventana.title('INSPIRATION')  # Titulo de la ventana
 
         fondo = 'lightsalmon'
 
-        self.frame_superior = Frame(self.ventana)
-        self.frame_superior.configure(background=fondo)
-        self.frame_superior.pack(fill='both', expand=True)
+        self.frames = []
+        for i in range(2):
+            self.frame = Frame(self.ventana)
+            self.frame.configure(background=fondo)
+            self.frame.pack(fill='both', expand=True)
+            self.frame.columnconfigure(i, weight=1)
 
-        self.frame_inferior = Frame(self.ventana)
-        self.frame_inferior.configure(background=fondo)
-        self.frame_inferior.pack(fill='both', expand=True)
+            self.frames.append(self.frame)
 
-        self.frame_superior.columnconfigure(0, weight=1)
-        self.frame_inferior.columnconfigure(1, weight=1)
 
+        # PARTE DE TÍTULO
+        self.titulo = Label(self.frames[0],  # Crea una etiqueta en la parte superior de la pantalla
+                            text='INSPIRATION',  # texto que aparece en la parte superior
+                            font=('Times', 36, 'bold'),  # la fuente del texto y demas
+                            bg=fondo  # Color del fondo
+                            )
+        self.titulo.pack(side='top',# Indica la posicion en la que estara lo indicado anteriormente, en la parte superior de la parte superior
+                         pady=20)  # Los pixels que tiene arriba y abajo el texto
+
+        #PARTE IMAGEN
         self.img = Image.open('imagen2.png')
         self.img = self.img.resize((175, 215))
         self.render = ImageTk.PhotoImage(self.img)
-        self.fondo = Label(self.frame_superior, image=self.render, bg=fondo)
+        self.fondo = Label(self.frames[0], image=self.render, bg=fondo)
         self.fondo.pack(expand=True, fill='both')
 
-        self.boton_iniciar = Button(self.frame_inferior,
+        #PARTE BOTONES
+        #Botón iniciar sesion
+        self.boton_iniciar = Button(self.frames[1],
                             text = 'Iniciar Sesión',
                             width = 16,
                             font = ('Times',12),
                             bg = 'tomato',
                             fg = '#fff',
                             command = self.abrir_iniciar)
+
         self.boton_iniciar.grid(row=0, column=0, pady=35, sticky='e')
         self.boton_iniciar.place(relx=0.5,rely=0.3,anchor=tkinter.CENTER)
 
-        self.boton_reg = Button(self.frame_inferior,
+        #Botón registrarse
+        self.boton_reg = Button(self.frames[1],
                                     text='Registrarse',
                                     width=16,
                                     font=('Times', 12),
                                     bg='tomato',
                                     fg='#fff',
-                                    command=self.abrir_reg
-                                    )
+                                    command = self.abrir_reg)
 
         self.boton_reg.grid(row=1, column=0, pady=35, sticky='e')
         self.boton_reg.place(relx=0.5,rely=0.5,anchor=tkinter.CENTER)
@@ -63,92 +76,62 @@ class Principal:
 class Login:
     def __init__(self):
         self.ventana = Tk()
-        self.ventana.geometry('500x700')   #Tamaño ventana
-        self.ventana.title('INSPIRATION')  #Titulo de la ventana
+        self.ventana.geometry('500x700')
+        self.ventana.title('INSPIRATION')
 
         fondo = 'lightsalmon'
 
-        #PARTE DE FRAMES
-        self.frame_superior = Frame(self.ventana)          #Parte superior de la pantalla
-        self.frame_superior.configure(background=fondo)    #Cambiar fondo
-        self.frame_superior.pack(fill='both', expand=True) #'pack' = crear interface grafica,
-                                                           #'fill' = indica la cantidad de espacio que tiene que rellenar el widget
-
-        self.frame_inferior = Frame(self.ventana)
-        self.frame_inferior.configure(background=fondo)
+        self.frame_inferior = Frame(self.ventana, bg=fondo)
         self.frame_inferior.pack(fill='both', expand=True)
 
-        self.frame_superior.columnconfigure(0, weight = 1) #El primer parametro indica que utiliza la primera columna de frame_interior
-        self.frame_inferior.columnconfigure(1, weight=1)   #Weight indica como se distribuye en el espacio de la interfaz
+        # Configurar el grid del frame_inferior para que se expanda
+        for i in range(3):  # 5 filas para etiquetas y entradas + 1 fila para el botón
+            self.frame_inferior.grid_rowconfigure(i, weight=1)
 
-        #PARTE DE TÍTULO
-        self.titulo = Label(self.frame_superior,     #Crea una etiqueta en la parte superior de la pantalla
-                            text = 'INSPIRATION',          #texto que aparece en la parte superior
-                            font = ('Times', 36, 'bold'), #la fuente del texto y demas
-                            bg = fondo               #Color del fondo
-                            )
+        self.frame_inferior.grid_columnconfigure(0, weight=1)
+        self.frame_inferior.grid_columnconfigure(1, weight=1)
 
-        self.titulo.pack(side = 'top',  #Indica la posicion en la que estara lo indicado anteriormente, en la parte superior de la parte superior
-                         pady = 20)     #Los pixels que tiene arriba y abajo el texto
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((150, 200))
+        self.render = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frame_inferior, image=self.render, bg=fondo)
+        self.fondo.grid(row=0, column=0, columnspan=2, pady=20)
 
-        #PARTE IMAGENES
-        self.img = Image.open('imagen2.PNG')   #lee la imagen
-        self.img = self.img.resize((175, 215))  #tamaño de la imagen
-        self.render = ImageTk.PhotoImage(self.img) #carga la imagen y muestra la imagen como una etiqueta
-        self.fondo = Label(self.frame_superior, image = self.render, bg = fondo) #Crea una etiqueta en la que indica lo que ha de verse en la parte superior de la interfaz
-        self.fondo.pack(expand=True, fill = 'both') #lo de antes
+        # Crear 5 etiquetas y entradas
+        self.etiquetas = []
+        self.entradas = []
+        self.nom_etiq = ['Usuario', 'Contraseña']
+        for i in range(2):
+            etiqueta = Label(self.frame_inferior,
+                             text=f'{self.nom_etiq[i]} :',
+                             font=('Times', 14),
+                             bg=fondo,
+                             fg='black')
+            etiqueta.grid(row=i + 1, column=0, padx=10, sticky='e')
+            self.etiquetas.append(etiqueta)
 
-        #PARTE DE DATOS
-        self.label_usuario = Label(self.frame_inferior,   #En la parte inferior de la interfaz se añade lo siguiente
-                                   text = 'Usuario: ',
-                                   font= ('Times', 18),
-                                   bg = fondo,
-                                   fg = 'black') #fg es el color de la letra de 'usuario'
+            entrada = Entry(self.frame_inferior,
+                            bd=2,
+                            width=14,
+                            bg='RosyBrown2',
+                            font=('Times', 14),
+                            show='*' if i == 1 else None)
 
-        self.label_usuario.pack(side='top',pady=20, expand = True)
-        self.label_usuario.grid(row=0, column=0, padx=10, sticky='e') #Los primeros dos parametros indican la posicion
-                                                                      #El tercer parametro es el margen de la derecha y la izq
-                                                                      #Lo ultimo posicion con respecto a puntos cardinales
+            entrada.grid(row=i + 1, column=1, padx=10, sticky='w')
+            self.entradas.append(entrada)
 
+        # Botón debajo de todas las entradas
+        self.boton2 = Button(self.frame_inferior,
+                             text='Entrar',
+                             width=14,
+                             font=('Times', 12),
+                             bg='tomato',
+                             fg='#fff',
+                             command = self.verificar )
 
-        self.entry_usuario= Entry(self.frame_inferior,  #Se crea un widget de entrada en la parte inferior
-                                  bd=2,                 #grosor del borde de la entrada
-                                  width = 14,           #ancho de entrada de caracteres
-                                  bg='RosyBrown2',
-                                  font = ('Times', 18))
-
-
-        self.entry_usuario.grid(row = 0, column = 1, padx = 5, sticky='w') #El grid es para organizar los widgets en una cuadricula
-
-        self.label_contraseña = Label(self.frame_inferior,
-                                     text='Contraseña: ',
-                                     font = ('Times', 18),
-                                     bg=fondo,
-                                     fg = 'black')
-
-        self.label_contraseña.grid(row = 1, column = 0, pady = 10, sticky = 'e') #pady = margen de la y
-
-        self.entry_contraseña = Entry(self.frame_inferior,
-                                      bd = 2,
-                                      width = 14,
-                                      font = ('Times', 18),
-                                      bg = 'RosyBrown2',
-                                      show = '*')
-
-        self.entry_contraseña.grid(row = 1, column = 1, padx = 5, sticky = 'w')
-
-        self.boton = Button(self.frame_inferior,
-                            text = 'Entrar',
-                            width = 16,
-                            font = ('Times',12),
-                            bg = 'tomato',
-                            fg = '#fff',
-                            command = self.acceso)
-
-        self.boton.grid(row = 2, column = 1, pady = 35, sticky = 'w')
+        self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
         mainloop()
-
 
     def acceso(self):
         try:
@@ -165,38 +148,8 @@ class Login:
                 raise ValueError('Usuario no encontrado')
 
         except ValueError as e:
-                messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
-                print(e)
-
-
-
-
-class Entrar():
-    def __init__(self):
-        self.ventana = Tk()
-        self.ventana.geometry('700x700')
-
-        fondo = 'lightsalmon'
-
-        self.frame_superior = Frame(self.ventana)
-        self.frame_superior.configure(background=fondo)
-        self.frame_superior.pack(fill='both', expand=True)
-
-        self.frame_inferior = Frame(self.ventana)
-        self.frame_inferior.configure(background=fondo)
-        self.frame_inferior.pack(fill='both', expand=True)
-
-        self.frame_superior.columnconfigure(0, weight=1)
-        self.frame_inferior.columnconfigure(1, weight=1)
-
-        self.img = Image.open('imagen2.png')
-        self.img = self.img.resize((150, 200))
-        self.cargar = ImageTk.PhotoImage(self.img)
-        self.fondo = Label(self.frame_superior, image=self.cargar, bg=fondo)
-        self.fondo.pack(expand=True, fill='both')
-
-        mainloop()
-
+            messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
+            print(e)
 
 class Registrarse:
     def __init__(self):
@@ -206,173 +159,174 @@ class Registrarse:
 
         fondo = 'lightsalmon'
 
-        #PARTE DE FRAMES
-        self.frame_superior = Frame(self.ventana)
-        self.frame_superior.configure(background=fondo)
-        self.frame_superior.pack(fill='both', expand=True)
-
-        self.frame_inferior = Frame(self.ventana)
-        self.frame_inferior.configure(background=fondo)
+        self.frame_inferior = Frame(self.ventana, bg=fondo)
         self.frame_inferior.pack(fill='both', expand=True)
 
-        self.frame_superior.columnconfigure(0, weight=1)
-        self.frame_inferior.columnconfigure(1, weight=1)
+        # Configurar el grid del frame_inferior para que se expanda
+        for i in range(7):  # 5 filas para etiquetas y entradas + 1 fila para el botón
+            self.frame_inferior.grid_rowconfigure(i, weight=1)
 
-        #PARTE DE IMAGEN
+        self.frame_inferior.grid_columnconfigure(0, weight=1)
+        self.frame_inferior.grid_columnconfigure(1, weight=1)
+
         self.img = Image.open('imagen2.png')
         self.img = self.img.resize((150, 200))
         self.render = ImageTk.PhotoImage(self.img)
-        self.fondo = Label(self.frame_superior, image=self.render, bg=fondo)
-        self.fondo.pack(expand=True, fill='both')
+        self.fondo = Label(self.frame_inferior, image=self.render, bg=fondo)
+        self.fondo.grid(row=0, column=0, columnspan=2, pady=20)
 
-        #PARTE ETIQUETAS
-        self.nombre = Label(self.frame_inferior,
-                            text = 'Nombre: ',
-                            font= ('Times', 15),
-                            bg = fondo,
-                            fg = 'black'
-                            )
-        self.nombre.pack(expand = True, fill = 'both')
-        self.nombre.grid(row=0, column=0, padx=10, pady = 5, sticky='e')
+        # Crear 5 etiquetas y entradas
+        self.etiquetas = []
+        self.entradas = []
+        self.nom_etiq = ['Nombre', 'Nombre de usuario', 'Edad', 'Email', 'Contraseña']
+        for i in range(1, 6):
+            etiqueta = Label(self.frame_inferior,
+                             text=f'{self.nom_etiq[i - 1]} :',
+                             font=('Times', 14),
+                             bg=fondo,
+                             fg='black')
+            etiqueta.grid(row=i, column=0, padx=10, pady=0, sticky='e')
+            self.etiquetas.append(etiqueta)
 
 
-        self.usu = Label(self.frame_inferior,
-                            text='Nombre de usuario: ',
-                            font=('Times', 15),
-                            bg=fondo,
-                            fg='black'
-                            )
+            entrada = Entry(self.frame_inferior,
+                            bd=2,
+                            width=14,
+                            bg='RosyBrown2',
+                            font=('Times', 14),
+                            show = '*' if i==5 else None)
 
-        self.usu.grid(row=2, column=0, padx=10,pady = 5, sticky='e')
+            entrada.grid(row=i, column=1, padx=10, pady=0, sticky='w')
+            self.entradas.append(entrada)
 
-        self.edad = Label(self.frame_inferior,
-                          text = 'Edad: ',
-                          font = ('Times', 15),
-                          bg = fondo,
-                          fg = 'black')
-
-        self.edad.grid(row=4, column=0, padx=10,pady = 5, sticky='e')
-
-        self.email = Label(self.frame_inferior,
-                            text='Email: ',
-                            font=('Times', 15),
-                            bg=fondo,
-                            fg='black'
-                            )
-        self.email.grid(row=6, column=0, padx=10,pady = 5, sticky='e')
-
-        self.contraseña = Label(self.frame_inferior,
-                            text='Contraseña: ',
-                            font=('Times', 15),
-                            bg=fondo,
-                            fg='black'
-                            )
-        self.contraseña.grid(row=8, column=0, padx=10,pady = 5, sticky='e')
-
-        #PARTE DE ENTRADAS
-        self.entrar_nombre = Entry(self.frame_inferior,
-                                   bd=2,
-                                   width=14,
-                                   bg='RosyBrown2',
-                                   font=('Times', 12)
-                                   )
-
-        self.entrar_nombre.grid(row=0, column=1, padx=5,pady = 5, sticky = 'w')
-
-        self.entrar_usu = Entry(self.frame_inferior,
-                                   bd=2,
-                                   width=14,
-                                   bg='RosyBrown2',
-                                   font=('Times', 12)
-
-                                   )
-
-        self.entrar_usu.grid(row=2, column=1, padx=5,pady = 5, sticky='w')
-
-        self.entrar_edad = Entry(self.frame_inferior,
-                                bd=2,
-                                width=14,
-                                bg='RosyBrown2',
-                                font=('Times', 12)
-                                )
-
-        self.entrar_edad.grid(row=4, column=1, padx=5, pady=5, sticky='w')
-
-        self.entrar_email = Entry(self.frame_inferior,
-                                   bd=2,
-                                   width=14,
-                                   bg='RosyBrown2',
-                                   font=('Times', 12)
-                                   )
-        self.entrar_email.grid(row=6, column=1, padx=5,pady = 5, sticky='w')
-
-        self.entrar_contraseña = Entry(self.frame_inferior,
-                                   bd=2,
-                                   width=14,
-                                   bg='RosyBrown2',
-                                   font=('Times', 12),
-                                   show = '*'
-                                   )
-        self.entrar_contraseña.grid(row=8, column=1, padx=5, pady = 5,sticky='w')
-
-        #BOTON DE ENTRAR
-
-        self.boton1 = Button(self.frame_inferior,
+        # Botón debajo de todas las entradas
+        self.boton3 = Button(self.frame_inferior,
                              text='Registrarse',
                              width=14,
                              font=('Times', 12),
                              bg='tomato',
-                             fg='#fff',
-                            command = self.verificar
+                             fg='#fff')
 
-                             )
-
-        self.boton1.grid(row=1, column=5, pady=35, sticky='w')
-        self.boton1.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
+        self.boton3.grid(row=6, column=0, columnspan=2, pady=20)
 
         mainloop()
 
-    def verificar(self):
+        def verificar(self):
 
-        nombre = self.entrar_nombre.get()
-        user = self.entrar_usu.get()
-        email = self.entrar_email.get()
-        contra = self.entrar_contraseña.get()
-        edad = self.entrar_edad.get()
+            nombre = self.entrar_nombre.get()
+            user = self.entrar_usu.get()
+            email = self.entrar_email.get()
+            contra = self.entrar_contraseña.get()
+            edad = self.entrar_edad.get()
 
-        AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
+            AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
 
-        if not(AVerificar.check_name()):
-            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
+            if not(AVerificar.check_name()):
+                messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
 
-        elif not(AVerificar.check_nickname()):
-            messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
+            elif not(AVerificar.check_nickname()):
+                messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
 
-        elif edad.isdigit() == False:
-            messagebox.showinfo('Acceso incorrecto', 'Edad no válida')
+            elif edad.isdigit() == False:
+                messagebox.showinfo('Acceso incorrecto', 'Edad no válida')
 
-        elif int(edad) < 14:
-            messagebox.showinfo('Acceso incorrecto', 'Debes ser mayor de 14 años')
-            self.ventana.destroy()
+            elif int(edad) < 14:
+                messagebox.showinfo('Acceso incorrecto', 'Debes ser mayor de 14 años')
+                self.ventana.destroy()
 
-        elif not(AVerificar.check_email()):
-            messagebox.showinfo('Acceso incorrecto', 'Email no válido')
+            elif not(AVerificar.check_email()):
+                messagebox.showinfo('Acceso incorrecto', 'Email no válido')
 
+            elif not(AVerificar.check_password()):
+                messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
 
+            else:
+                Data.diccUsers[user] = AVerificar
+                Data().guardar_usuarios()
+                print(Data.diccUsers)
 
-        elif not(AVerificar.check_password()):
-            messagebox.showinfo('Acceso incorrecto', 'La contraseña no es válida')
+                messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
+                self.ventana.destroy()
+                Entrar()
 
+class Entrar:
+    def __init__(self):
+        self.ventana = Tk()
+        self.ventana.geometry('500x700')
+        self.ventana.title('INSPIRATION')
 
+        fondo = 'antiquewhite'
 
-        else:
-            Data.diccUsers[user] = AVerificar
-            Data().guardar_usuarios()
-            print(Data.diccUsers)
+        self.frames = []
+        for i in range(2):
+            self.frame = Frame(self.ventana, bg=fondo)
+            self.frame.pack(fill='both', expand=True)
+            self.frames.append(self.frame)
 
-            messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
-            self.ventana.destroy()
-            Principal()
+        for i in range(3):
+            self.frames[0].rowconfigure(i, weight=1)
+            self.frames[0].columnconfigure(i, weight=1)
+
+            self.frames[1].rowconfigure(i, weight=1)
+            self.frames[1].columnconfigure(i, weight=1)
+
+        #IMAGEN Y TAL
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((25, 25))
+        self.cargar = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frames[0], image=self.cargar, bg=fondo)
+        self.fondo.pack(expand=True, fill='both', side='left')
+        self.fondo.place(x=0, y=1)
+
+        # Insertar título
+        self.titulo = Label(self.frames[0],
+                            text=f'Elena ',
+                            font=('Times', 40, 'bold'),
+                            bg=fondo,
+                            fg='lightsalmon')
+        self.titulo.grid(row=0, column=0, padx=10, pady=2, columnspan=2)
+
+        # Insertar subtítulo
+        self.subtitulo = Label(self.frames[0],
+                               text='@elena333',
+                               font=('Times', 15),
+                               bg=fondo,
+                               fg='lightsalmon')
+        self.subtitulo.grid(row=1, column=0, padx=10, pady=5, columnspan = 2)
+
+        # Etiquetas números
+        self.lista_num = ['110', '1365']  # poner los numeros correspondientes de cada usuario
+        self.lista_etiq = ['Seguidos', 'Seguidores']
+        self.etiquetas = []
+
+        # Configuración para centrar las etiquetas
+        for i in range(2):
+            self.etiqueta = Label(self.frames[0],
+                                  text=f'{self.lista_num[i]} {self.lista_etiq[i]}',
+                                  font=('Times', 20),
+                                  bg=fondo,
+                                  fg='black')
+            self.etiqueta.grid(row=2, column=i, padx=10, pady=10, sticky='')
+
+            self.etiquetas.append(self.etiqueta)
+
+        # Botones
+        self.botones = []
+        self.nom_bot = ['Mis inspirations', 'Inspirations', 'Buscar persona']
+        for i in range(3):
+            self.boton = Button(self.frames[1],
+                                text=self.nom_bot[i],
+                                width=20,
+                                height = 1,
+                                bd = 1,
+                                font=('Times', 18),
+                                bg='lightcoral',
+                                fg='#fff')
+            # Ajuste del padding para mayor proximidad entre botones
+            self.boton.grid(row=i, column=0, columnspan=2, padx=5, pady=2)
+            self.botones.append(self.boton)
+
+        mainloop()
 
 Data().lectura_usuarios()
 print(Data.diccUsers)

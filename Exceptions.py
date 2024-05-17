@@ -34,3 +34,25 @@ class Wrong_Password_Exception(Exception):
 
     def __str__(self):
         return "El usuario o la contraseña ingresada son incorrectos"
+
+
+
+class InvalidPasswordError(Exception):
+    def __init__(self, message="Contraseña incorrecta"):
+        self.message = message
+        super().__init__(self.message)
+
+class UserNotFoundError(Exception):
+    def __init__(self, message="El usuario no existe"):
+        self.message = message
+        super().__init__(self.message)
+
+class AlreadyFollowingError(Exception):
+    def __init__(self, message="Ya sigues a este usuario"):
+        self.message = message
+        super().__init__(self.message)
+
+class NotFollowingError(Exception):
+    def __init__(self, message="No sigues a este usuario"):
+        self.message = message
+        super().__init__(self.message)
