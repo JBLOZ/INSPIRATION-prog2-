@@ -382,10 +382,8 @@ class Escribir():
         mainloop()
     def publicar(self):
         texto = self.texto.get("1.0", tkinter.END).strip()
-
         self.usuario.create_inspiration(texto)
         print(texto)
-        Data().guardar_usuarios()
         self.ventana.destroy()
         Entrar(self.usuario)
 

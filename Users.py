@@ -127,8 +127,9 @@ class Data:
 
 if __name__ == '__main__':
     Data().lectura_usuarios()
+    for i in (Data.diccUsers['jord'].listaInspirations):
+        print(i.text)
 
-    print(Data.diccUsers['jord'].listaInspirations[0].text)
 
 
 
