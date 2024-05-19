@@ -76,7 +76,10 @@ class User:
             pass
 
     def create_inspiration(self, text):
+
         new_inspiration = Inspiration(self, text)
+        if self.listaInspirations is not list:
+            self.listaInspirations = []
 
         Data.diccUsers[self.nickname].listaInspirations.append(new_inspiration)
         Data().guardar_usuarios()
@@ -125,7 +128,7 @@ class Data:
 if __name__ == '__main__':
     Data().lectura_usuarios()
 
-    print(Data.diccUsers)
+    print(Data.diccUsers['jord'].listaInspirations[0].text)
 
 
 
