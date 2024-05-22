@@ -497,17 +497,6 @@ class InspirationInterfaz:
         self.botonMg.configure(bg='tomato' if self.parent.usuario in self.inspiration.likes else 'antiquewhite')
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
-    '''def megusta(self):
-
-        self.usuario.me_gusta()
-
-    def cambiar_color(self):
-        if self.usuario.comprobar_mg() == False:
-            self.boton.configure(bg = 'tomato')
-
-        else:
-            self.boton = self.boton'''
-
 
 Data().lectura_usuarios()
 print(Data.diccUsers['jord'].password)

@@ -1,7 +1,6 @@
 # Clase de los tweets
 import datetime as dt
 
-
 class Inspiration():
     def __init__(self, user, text):
         self.user = user
@@ -9,7 +8,6 @@ class Inspiration():
         self.likes = []
         self.comments = []
         self.fecha = dt.datetime.now()
-        self.reinspirations = []
 
     # Añadir like a un inspiration
     def add_like(self, user):
@@ -30,24 +28,6 @@ class Inspiration():
             self.comments.remove((user, comment))
 
 
-
-"""
-class Inspiratiion:
-    def __init__(self):
-        self.inspirations = []
-
-    def add_inspiration(self, inspiration):
-        self.inspiration.append(inspiration)
-
-    def view_inspirations(self):
-        if self.inspirations:
-            print("Inspirations:")
-            for i, inspiration in (self.inspirations):
-                print(f'{i}. {inspiration}')
-        else:
-            print("Todavía no hay inspirations.")
-            
-"""
 
         
 
