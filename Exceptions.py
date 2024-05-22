@@ -3,6 +3,9 @@ class Nickname_Verified_Exception(Exception):
         self.message = message
         super().__init__(self.message)
 
+
+
+
     def __str__(self):
         return self.message
 class Password_Verified_Exception(Exception):
