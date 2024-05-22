@@ -1,9 +1,11 @@
 import tkinter
 from tkinter import *
-
+from Inspiration import Inspiration
+from Users import User
 class MyInspirations:
-    def __init__(self):
+    def __init__(self, usuario):
         fondo = 'antiquewhite'
+        self.usuario = usuario
 
         self.ventana = Tk()
         self.ventana.geometry('500x700')
@@ -64,5 +66,12 @@ class MyInspirations:
     def config_tamaño_frame(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all")) #para que todos los elementos del canvas tengan el mismo tamaño
 
+    '''def megusta(self):
+
+        Inspiration().add_like(self.usuario)'''
+
+    def cambiar_color(self):
+        if self.usuario.comprobar_mg():
+            self.boton.configure(bg = 'tomato')
 # Crear una instancia de la clase
 MyInspirations()
