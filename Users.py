@@ -44,14 +44,13 @@ class User:
 
     # Verificar que el email es correcto
     def check_email(self):
-        def check_email(self):
-            try:
-                if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
-                    raise ex.InvalidEmailError()
-                return True
-            except ex.InvalidEmailError as e:
-                print(e)
-                return False
+        try:
+            if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
+                raise ex.InvalidEmailError()
+            return True
+        except ex.InvalidEmailError as e:
+            print(e)
+            return False
 
     def __add__(self, other):
         try:
@@ -128,8 +127,8 @@ class User:
             inspiration.likes.remove(self)
         else:
             inspiration.likes.append(self)
+        Data.diccUsers[inspiration.user.nickname] = inspiration.user
 
-        Data.diccUsers[self.nickname] = self
         Data().guardar_usuarios()
 
     def guardar_en_csv(self):
@@ -168,11 +167,8 @@ class Data:
         except Exception as e:
             print(e)
 
-if __name__ == '__main__':
-    Data().lectura_usuarios()
-    pepe = User('Pepe', 'pepe123', 'jadsjj', 'Aa123456@')
 
-    print(User().search_user('pepe'))
+
 
 
 

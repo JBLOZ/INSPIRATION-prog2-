@@ -6,10 +6,11 @@ from Users import User, Data
 from Inspiration import Inspiration
 
 
-Data().lectura_usuarios()
+
 
 class Principal:
     def __init__(self):
+        Data().lectura_usuarios()
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')  # Titulo de la ventana
@@ -354,6 +355,7 @@ class Entrar:
 
     def buscar_personas(self):
         pass
+
 class Escribir():
     def __init__(self, usuario):
 
@@ -489,23 +491,14 @@ class InspirationInterfaz:
         self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
     def megusta(self):
-        if self.parent.usuario in self.inspiration.likes:
-            self.inspiration.likes.remove(self.parent.usuario)
-        else:
-            self.inspiration.likes.append(self.parent.usuario)
-
+        self.parent.usuario.me_gusta(self.inspiration)
         self.botonMg.configure(bg='tomato' if self.parent.usuario in self.inspiration.likes else 'antiquewhite')
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
+
 Data().lectura_usuarios()
 print(Data.diccUsers['jord'].password)
-Principal()
-
-
-print(Data.diccUsers['jord'].listaInspirations[0].text)
-
-
 
 
 
