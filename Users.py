@@ -41,7 +41,7 @@ class User:
     def check_email(self):
         try:
             if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
-                raise InvalidEmailError()
+                raise ex.InvalidEmailError()
             return True
         except ex.InvalidEmailError as e:
             return False

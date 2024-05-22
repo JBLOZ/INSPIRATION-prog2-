@@ -23,13 +23,13 @@ class MyInspirations:
         self.frame_textos = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw') #Se crea una ventana en la posicion (0,0)  en la que colocaremos los textos
 
-        self.textos= ['No hay mal que por bien no venga', 'Dios los crea y ellos se juntan', 'A caballo regalado no le quites el dentado', 'Con dios', 'Al mal tiempo buena cara', 'La avaricia rompe el saco']
-        for texto in self.textos:
-            self.frame = LabelFrame(self.frame_textos, text='@elena')
+        self.textos = self.usuario.show_inspirations()
+        for inspiration in self.textos:
+            self.frame = LabelFrame(self.frame_textos, text=self.usuario)
             self.frame.pack(pady=15, padx = 15)
 
             self.texto = Label(self.frame,
-                               text=texto,
+                               text=inspiration,
                                font=('Times', 12),
                                bg=fondo,
                                fg='black',
@@ -41,9 +41,9 @@ class MyInspirations:
             self.boton = Button(self.frame,
                                 text='ME GUSTA',
                                 font=('Times', 9),
-                                bg=fondo,
-                                fg='black',
-                                command = self.cambiar_color)
+                                bg='antiquewhite' if self.usuario.comprobar_mg(inspiration) == False else 'tomato',
+                                fg='black'
+                                )
             self.boton.pack(side='left')  # Empaquetar el botón en una línea separada
 
             self.boton2 = Button(self.frame,
