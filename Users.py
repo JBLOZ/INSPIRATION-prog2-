@@ -4,11 +4,11 @@ import Exceptions as ex
 from Inspiration import Inspiration
 import csv
 class User:
-    def __init__(self, name=None, nickname=None, email=None, password=None):
+    def __init__(self, name=None, nickname=None, email=None, _password=None):
         self.name = name
         self.nickname = nickname
         self.email = email
-        self.password = password
+        self._password = _password
         self.listaSeguidores = []
         self.listaSiguiendo = []
         self.listaInspirations = []
@@ -35,7 +35,7 @@ class User:
     # Verificar que la contraseña es correcta
     def check_password(self):
         try:
-            if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+            if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self._password):
                 raise ex.InvalidPasswordError()
             return True
         except ex.InvalidPasswordError as e:
@@ -44,14 +44,13 @@ class User:
 
     # Verificar que el email es correcto
     def check_email(self):
-        def check_email(self):
-            try:
-                if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
-                    raise ex.InvalidEmailError()
-                return True
-            except ex.InvalidEmailError as e:
-                print(e)
-                return False
+        try:
+            if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
+                raise ex.InvalidEmailError()
+            return True
+        except ex.InvalidEmailError as e:
+            print(e)
+            return False
 
     def __add__(self, other):
         try:
@@ -128,8 +127,8 @@ class User:
             inspiration.likes.remove(self)
         else:
             inspiration.likes.append(self)
+        Data.diccUsers[inspiration.user.nickname] = inspiration.user
 
-        Data.diccUsers[self.nickname] = self
         Data().guardar_usuarios()
 
     def guardar_en_csv(self):
@@ -145,7 +144,8 @@ class User:
 
 class Data:
 
-    archivo = 'usuarios.pickle'
+    archivopk = 'usuarios.pickle'
+    user_passw = 'user_passw.csv'
     diccUsers = {}
     def __init__(self):
         pass
@@ -153,7 +153,7 @@ class Data:
 
     def lectura_usuarios(self):
         try:
-            with open(Data.archivo, "rb") as rfile:
+            with open(Data.archivopk, "rb") as rfile:
                 Data.diccUsers = plk.load(rfile)
         except (EOFError, FileNotFoundError):
             print('Archivo vacío o no encontrado. Inicializando diccionario vacío...')
@@ -163,16 +163,25 @@ class Data:
 
     def guardar_usuarios(self):
         try:
-            with open(Data.archivo, "wb") as wfile:
+            with open(Data.archivopk, "wb") as wfile:
                 plk.dump(Data.diccUsers, wfile)
+
+
         except Exception as e:
             print(e)
 
-if __name__ == '__main__':
-    Data().lectura_usuarios()
-    pepe = User('Pepe', 'pepe123', 'jadsjj', 'Aa123456@')
+    def guardar_user_passw(self):
+        try:
+            with open(Data.user_passw, mode='a') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Usuario", "Contraseña"])
+                for user in Data.diccUsers.values():
+                    writer.writerow([user.nickname, user._password])
+        except Exception as e:
+            print(e)
 
-    print(User().search_user('pepe'))
+
+
 
 
 

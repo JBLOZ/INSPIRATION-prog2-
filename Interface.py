@@ -5,11 +5,9 @@ from PIL import ImageTk, Image
 from Users import User, Data
 from Inspiration import Inspiration
 
-
-Data().lectura_usuarios()
-
 class Principal:
     def __init__(self):
+        Data().lectura_usuarios()
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')  # Titulo de la ventana
@@ -143,7 +141,7 @@ class Login:
             contra = self.entradas[1].get()
             Data().lectura_usuarios()
             if nombre in Data.diccUsers:  # Verifica que el usuario exista
-                if contra == Data.diccUsers[nombre].password:
+                if contra == Data.diccUsers[nombre]._password:
 
                     self.ventana.destroy()
                     userAct = Data.diccUsers[nombre]
@@ -228,7 +226,7 @@ class Registrarse:
         contra = self.entradas[4].get()
 
 
-        AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
+        AVerificar = User(name=nombre, nickname=user, email=email, _password=contra)
 
         if not(AVerificar.check_name()):
             messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
@@ -252,6 +250,7 @@ class Registrarse:
         else:
             Data.diccUsers[user] = AVerificar
             Data().guardar_usuarios()
+            Data().guardar_user_passw()
             messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
             self.ventana.destroy()
             Entrar(AVerificar)
@@ -354,6 +353,7 @@ class Entrar:
 
     def buscar_personas(self):
         pass
+
 class Escribir():
     def __init__(self, usuario):
 
@@ -470,7 +470,7 @@ class InspirationInterfaz:
                                  font=('Times', 9),
                                  bg='tomato' if self.parent.usuario in inspiration.likes else 'antiquewhite',
                                  fg='black',
-                                 command=self.megusta)
+                                 command=self.bt_me_gusta)
 
         self.labelMg = Label(self.frame,
                                 text=f'{len(inspiration.likes)}',
@@ -488,22 +488,12 @@ class InspirationInterfaz:
                                 fg='black')
         self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
-    def megusta(self):
-        if self.parent.usuario in self.inspiration.likes:
-            self.inspiration.likes.remove(self.parent.usuario)
-        else:
-            self.inspiration.likes.append(self.parent.usuario)
-
+    def bt_me_gusta(self):
+        self.parent.usuario.me_gusta(self.inspiration)
         self.botonMg.configure(bg='tomato' if self.parent.usuario in self.inspiration.likes else 'antiquewhite')
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
-Data().lectura_usuarios()
-print(Data.diccUsers['jord'].password)
-Principal()
-
-
-print(Data.diccUsers['jord'].listaInspirations[0].text)
 
 
 
