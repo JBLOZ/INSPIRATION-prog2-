@@ -58,6 +58,7 @@ class User:
                 raise ex.AlreadyFollowingError()
             else:
                 self.listaSiguiendo.append(other)
+                other.listaSeguidores.append(self)
                 Data.diccUsers[self.nickname] = self
                 Data().guardar_usuarios()
         except ex.AlreadyFollowingError as e:
@@ -70,6 +71,7 @@ class User:
                 raise ex.NotFollowingError()
             else:
                 self.listaSiguiendo.remove(other)
+                other.listaSeguidores.remove(self)
                 Data.diccUsers[self.nickname] = self
                 Data().guardar_usuarios()
         except ex.NotFollowingError as e:
@@ -172,9 +174,9 @@ class Data:
 
     def guardar_user_passw(self):
         try:
-            with open(Data.user_passw, mode='a') as file:
+            with open(Data.user_passw, mode='w') as file:
                 writer = csv.writer(file)
-                writer.writerow(["Usuario", "Contraseña"])
+                writer.writerow(["Usuario", "Contrasena"])
                 for user in Data.diccUsers.values():
                     writer.writerow([user.nickname, user._password])
         except Exception as e:
@@ -183,7 +185,12 @@ class Data:
 
 
 
-
+if __name__ == '__main__':
+    Data().lectura_usuarios()
+    Data.diccUsers['admin'] + Data.diccUsers['sarandonga']
+    Data.diccUsers['sarandonga'] + Data.diccUsers['jbl42']
+    Data.diccUsers['sarandonga'] + Data.diccUsers['admin']
+    Data.diccUsers['jbl42'] + Data.diccUsers['admin']
 
 
 

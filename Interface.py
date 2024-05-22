@@ -401,7 +401,7 @@ class Escribir():
 
 
 class ShowInspirations:
-    def __init__(self, usuario, mios=True):
+    def __init__(self, usuario, mios=False):
         fondo = 'antiquewhite'
         self.usuario = usuario
 
@@ -419,8 +419,7 @@ class ShowInspirations:
 
         # Crear un frame dentro del área donde se encuentra el texto
         self.frame_textos = Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_textos,
-                                  anchor='nw')  # Se crea una ventana en la posición (0,0) en la que colocaremos los textos
+        self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw')
 
         if mios:
             self.textos = self.usuario.listaInspirations
@@ -439,11 +438,11 @@ class ShowInspirations:
 
 
 class InspirationInterfaz:
-    def __init__(self, parent, inspiration, fondo):
-        self.parent = parent
+    def __init__(self, padre, inspiration, fondo):
+        self.padre = padre
         self.inspiration = inspiration
 
-        self.frame = LabelFrame(self.parent.frame_textos, text=f'@{self.parent.usuario.nickname}')
+        self.frame = LabelFrame(self.padre.frame_textos, text=f'@{self.inspiration.user.nickname}')
         self.frame.pack(pady=15, padx=15)
 
         # Etiqueta para mostrar la fecha en la parte superior derecha
@@ -468,7 +467,7 @@ class InspirationInterfaz:
         self.botonMg = Button(self.frame,
                                  text='ME GUSTA',
                                  font=('Times', 9),
-                                 bg='tomato' if self.parent.usuario in inspiration.likes else 'antiquewhite',
+                                 bg='tomato' if self.padre.usuario in inspiration.likes else 'antiquewhite',
                                  fg='black',
                                  command=self.bt_me_gusta)
 
@@ -489,8 +488,8 @@ class InspirationInterfaz:
         self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
     def bt_me_gusta(self):
-        self.parent.usuario.me_gusta(self.inspiration)
-        self.botonMg.configure(bg='tomato' if self.parent.usuario in self.inspiration.likes else 'antiquewhite')
+        self.padre.usuario.me_gusta(self.inspiration)
+        self.botonMg.configure(bg='tomato' if self.padre.usuario in self.inspiration.likes else 'antiquewhite')
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
