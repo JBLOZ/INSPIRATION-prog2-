@@ -322,6 +322,7 @@ class Entrar:
         # Botones
         self.botones = []
         self.nom_bot = ['Crear Inspiration','Mis Inspirations', 'Inspirations', 'Buscar persona']
+        self.listita =[self.escribir_boton, self.sdh, self.mostrar_insp,self.skjdf]
         for i in range(4):
             self.boton = Button(self.frames[1],
                                 text=self.nom_bot[i],
@@ -331,7 +332,7 @@ class Entrar:
                                 font=('Times', 18),
                                 bg='lightcoral',
                                 fg='#fff',
-                                command = self.escribir_boton if i==0 self.mostrar_insp if i==2 else None)
+                                command = self.listita[i])
 
             # Ajuste del padding para mayor proximidad entre botones
             self.boton.grid(row=i, column=0, columnspan=2, padx=5, pady=2)
@@ -347,6 +348,11 @@ class Entrar:
         self.ventana.destroy()
         MyInspirations(self.usuario)
 
+    def sdh(self):
+        pass
+
+    def skjdf(self):
+        pass
 class Escribir():
     def __init__(self, usuario):
 
@@ -413,35 +419,40 @@ class MyInspirations:
         self.frame_textos = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw') #Se crea una ventana en la posicion (0,0)  en la que colocaremos los textos
 
-        self.textos = self.usuario.show_inspirations()
-        for inspiration in self.textos:
-            self.frame = LabelFrame(self.frame_textos, text=self.usuario)
-            self.frame.pack(pady=15, padx = 15)
+        if len(self.usuario.listaInspirations) == 0:
+            print('hjoalsj')
+            pass
 
-            self.texto = Label(self.frame,
-                               text=inspiration,
-                               font=('Times', 12),
-                               bg=fondo,
-                               fg='black',
-                               padx=20,
-                               width=45,
-                               height=5)
-            self.texto.pack(fill='both', expand=True)
+        else:
+            self.textos = self.usuario.show_inspirations()
+            for inspiration in self.textos:
+                self.frame = LabelFrame(self.frame_textos, text=self.usuario)
+                self.frame.pack(pady=15, padx = 15)
 
-            self.boton = Button(self.frame,
-                                text='ME GUSTA',
-                                font=('Times', 9),
-                                bg='antiquewhite' if self.usuario.comprobar_mg(inspiration) == False else 'tomato',
-                                fg='black'
-                                )
-            self.boton.pack(side='left')  # Empaquetar el botón en una línea separada
+                self.texto = Label(self.frame,
+                                   text=inspiration,
+                                   font=('Times', 12),
+                                   bg=fondo,
+                                   fg='black',
+                                   padx=20,
+                                   width=45,
+                                   height=5)
+                self.texto.pack(fill='both', expand=True)
 
-            self.boton2 = Button(self.frame,
-                                text='COMENTAR',
-                                font=('Times', 9),
-                                bg=fondo,
-                                fg='black')
-            self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
+                self.boton = Button(self.frame,
+                                    text='ME GUSTA',
+                                    font=('Times', 9),
+                                    bg='antiquewhite' if self.usuario.comprobar_mg(inspiration) == False else 'tomato',
+                                    fg='black'
+                                    )
+                self.boton.pack(side='left')  # Empaquetar el botón en una línea separada
+
+                self.boton2 = Button(self.frame,
+                                    text='COMENTAR',
+                                    font=('Times', 9),
+                                    bg=fondo,
+                                    fg='black')
+                self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
         # Configurar el desplazamiento del canvas
         self.canvas.config(yscrollcommand=self.scrollbar.set) #se configura el scrollbar para que funcione de forma vincuada al frame
