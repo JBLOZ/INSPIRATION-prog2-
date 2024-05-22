@@ -47,50 +47,43 @@ class User:
             return False
 
     def __add__(self, other):
-        self.listaInspirations.append(other)
-        Data.diccUsers[self.nickname] = self
-        Data().guardar_usuarios()
+        try:
+            if other in self.listaSiguiendo:
+                raise ex.AlreadyFollowingError()
+            else:
+                self.listaSiguiendo.append(other)
+                Data.diccUsers[self.nickname] = self
+                Data().guardar_usuarios()
+        except ex.AlreadyFollowingError as e:
+            print(e)
 
 
     def __sub__(self, other):
-        self.listaInspirations.remove(other)
-        Data.diccUsers[self.nickname] = self
-        Data().guardar_usuarios()
+        try:
+            if other not in self.listaSiguiendo:
+                raise ex.NotFollowingError()
+            else:
+                self.listaSiguiendo.remove(other)
+                Data.diccUsers[self.nickname] = self
+                Data().guardar_usuarios()
+        except ex.NotFollowingError as e:
+            print(e)
 
 
     def follow(self, other):
-        try:
-            if other.nickname in self.listaSiguiendo:
-                pass
-              #  raise AlreadyFollowingError()
-            self.listaSiguiendo.append(other.nickname)
-            other.listaSeguidores.append(self.nickname)
-            Data.diccUsers[self.nickname] = self
-            Data().guardar_usuarios()
-        except ex.AlreadyFollowingError as e:
-            pass
+        self.__add__(other)
 
     def unfollow(self, other):
-        try:
-            if other.nickname not in self.listaSiguiendo:
-                raise ex.NotFollowingError()
-            self.listaSiguiendo.remove(other.nickname)
-            other.listaSeguidores.remove(self.nickname)
-            Data.diccUsers[self.nickname] = self
-            Data().guardar_usuarios()
-        except ex.NotFollowingError as e:
-            pass
+        self.__sub__(other)
 
     def create_inspiration(self, text):
 
         new_inspiration = Inspiration(self, text)
-        if self.listaInspirations is not list:
-            self.listaInspirations = []
-
         Data.diccUsers[self.nickname].listaInspirations.append(new_inspiration)
         Data().guardar_usuarios()
 
     def show_inspirations(self):
+
         user_inspirations = self.listaInspirations
         for followed_user in self.listaSiguiendo:
             user_inspirations.extend(followed_user.listaInspirations)
@@ -99,9 +92,10 @@ class User:
         for inspiration in user_inspirations:
             if inspiration not in unique_inspirations:
                 unique_inspirations.append(inspiration)
+        if  len(unique_inspirations) == 0:
+            return "No hay inspiraciones para mostrar."
 
-        sorted_inspirations = sorted(unique_inspirations, key=lambda x: x.date_published)
-
+        sorted_inspirations = sorted(unique_inspirations, key=lambda x: x.fecha)
         return sorted_inspirations
 
     def search_user(self, cadena):
@@ -120,11 +114,6 @@ class User:
             inspiration.likes.append(self)
             Data.diccUsers[self.nickname] = self
             Data().guardar_usuarios()
-
-    def comprobar_mg(self, inspiration):
-
-        if self in inspiration.likes:
-            return True
 
 
 class Data:
