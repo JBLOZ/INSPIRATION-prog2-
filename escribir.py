@@ -44,8 +44,8 @@ class Escribir():
 
 
         mainloop()
-    def publicar(self):
 
+    def publicar(self):
         texto = self.texto.get('1.0', 'end')
         self.usuario.create_inspiration(texto)
         Data().guardar_usuarios()
