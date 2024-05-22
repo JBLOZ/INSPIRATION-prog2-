@@ -13,32 +13,38 @@ class User:
         self.listaInspirations = []
 
     def check_name(self):
-        if re.match(r'^[A-Z][a-z_]{1,}$', self.name):
+        try:
+            if not re.match(r'^[A-Z][a-z_]{1,}$', self.name):
+                raise InvalidNameError()
             return True
-        else:
-            pass
-          #  raise InvalidNameError()
+        except InvalidNameError as e:
+            return False
+
 
     def check_nickname(self):
-        if re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
+        try:
+            if not re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
+                raise InvalidNicknameError()
             return True
-        else:
-            pass
-          #  raise ex.InvalidNicknameError()
+        except InvalidNicknameError as e:
+            return False
+
 
     def check_password(self):
-        if re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+        try:
+            if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
+                raise InvalidPasswordError()
             return True
-        else:
-            pass
-         #   raise ex.InvalidPasswordError()
+        except InvalidPasswordError as e:
+            return False
 
     def check_email(self):
-        if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email):
+        try:
+            if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
+                raise InvalidEmailError()
             return True
-        else:
-            pass
-         #   raise ex.InvalidEmailError()
+        except InvalidEmailError as e:
+            return False
 
     def __add__(self, other):
         self.listaInspirations.append(other)
@@ -84,9 +90,9 @@ class User:
         Data.diccUsers[self.nickname].listaInspirations.append(new_inspiration)
         Data().guardar_usuarios()
 
-    def show_inspirations(current_user):
-        user_inspirations = current_user.listaInspirations
-        for followed_user in current_user.listaSiguiendo:
+    def show_inspirations(self):
+        user_inspirations = self.listaInspirations
+        for followed_user in self.listaSiguiendo:
             user_inspirations.extend(followed_user.listaInspirations)
 
         unique_inspirations = []
@@ -98,6 +104,27 @@ class User:
 
         return sorted_inspirations
 
+    def search_user(self, cadena):
+        Data().lectura_usuarios()
+        lista1= []
+
+        for i in Data.diccUsers.items():
+            if cadena.lower() in i[1].nickname.lower():
+                lista1.append(i)
+
+        return lista1# raise ex.UserNotFoundError()
+
+    def me_gusta(self, inspiration):
+
+        if self not in inspiration.likes:
+            inspiration.likes.append(self)
+            Data.diccUsers[self.nickname] = self
+            Data().guardar_usuarios()
+
+    def comprobar_mg(self, inspiration):
+
+        if self in inspiration.likes:
+            return True
 
 
 class Data:
@@ -127,8 +154,9 @@ class Data:
 
 if __name__ == '__main__':
     Data().lectura_usuarios()
-    for i in (Data.diccUsers['jord'].listaInspirations):
-        print(i.text)
+    pepe = User('Pepe', 'pepe123', 'jadsjj', 'Aa123456@')
+
+    print(User().search_user('pepe'))
 
 
 

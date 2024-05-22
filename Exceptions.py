@@ -37,8 +37,23 @@ class Wrong_Password_Exception(Exception):
 
 
 
+class InvalidNameError(Exception):
+    def __init__(self, message="Nombre incorrecto"):
+        self.message = message
+        super().__init__(self.message)
+
+class InvalidNicknameError(Exception):
+    def __init__(self, message="Nickname incorrecto"):
+        self.message = message
+        super().__init__(self.message)
+
 class InvalidPasswordError(Exception):
     def __init__(self, message="Contraseña incorrecta"):
+        self.message = message
+        super().__init__(self.message)
+
+class InvalidEmailError(Exception):
+    def __init__(self, message="Email incorrecto"):
         self.message = message
         super().__init__(self.message)
 
