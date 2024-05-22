@@ -42,7 +42,8 @@ class MyInspirations:
                                 text='ME GUSTA',
                                 font=('Times', 9),
                                 bg=fondo,
-                                fg='black')
+                                fg='black',
+                                command = self.cambiar_color)
             self.boton.pack(side='left')  # Empaquetar el botón en una línea separada
 
             self.boton2 = Button(self.frame,
@@ -68,10 +69,16 @@ class MyInspirations:
 
     '''def megusta(self):
 
-        Inspiration().add_like(self.usuario)'''
+        self.usuario.me_gusta()
 
     def cambiar_color(self):
-        if self.usuario.comprobar_mg():
+        if self.usuario.comprobar_mg() == False:
             self.boton.configure(bg = 'tomato')
-# Crear una instancia de la clase
-MyInspirations()
+
+        else:
+            self.boton = self.boton'''
+
+
+
+
+MyInspirations('jord')
