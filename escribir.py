@@ -12,15 +12,16 @@ class Escribir():
         self.usuario = usuario
         self.ventana = Tk()
 
-        self.texto = ScrolledText(self.ventana,
-                                  width= 48,
-                                  height= 10,
-                                  wrap = 'word',
-                                  bg = 'white',
-                                  fg = 'black',
-                                  padx = 40,
-                                  pady = 30,
-                                  font= ('Helvetica', 12)).pack()
+        self.texto = Text(self.ventana,
+                            width= 48,
+                            height= 10,
+                            wrap = 'word',
+                            bg = 'white',
+                            fg = 'black',
+                            padx = 40,
+                            pady = 30,
+                            font= ('Helvetica', 12))
+        self.texto.pack()
 
         self.img = Image.open('imagen2.png')
         self.img = self.img.resize((25, 25))
@@ -45,9 +46,10 @@ class Escribir():
         mainloop()
 
     def publicar(self):
-        self.usuario.create_inspiration(self.texto)
+        texto = self.texto.get('1.0', 'end')
+        self.usuario.create_inspiration(texto)
         Data().guardar_usuarios()
-        Escribir.destroy()
+        self.ventana.destroy()
         Entrar(self.usuario)
 
 
