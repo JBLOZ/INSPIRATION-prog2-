@@ -15,27 +15,27 @@ class User:
     def check_name(self):
         try:
             if not re.match(r'^[A-Z][a-z_]{1,}$', self.name):
-                raise InvalidNameError()
+                raise ex.InvalidNameError()
             return True
-        except InvalidNameError as e:
+        except ex.InvalidNameError as e:
             return False
 
 
     def check_nickname(self):
         try:
             if not re.match(r'^[a-zA-Z0-9]{3,15}$', self.nickname):
-                raise InvalidNicknameError()
+                raise ex.InvalidNicknameError()
             return True
-        except InvalidNicknameError as e:
+        except ex.Nickname_Verified_Exception as e:
             return False
 
 
     def check_password(self):
         try:
             if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$', self.password):
-                raise InvalidPasswordError()
+                raise ex.InvalidPasswordError()
             return True
-        except InvalidPasswordError as e:
+        except ex.InvalidPasswordError as e:
             return False
 
     def check_email(self):
@@ -43,7 +43,7 @@ class User:
             if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self.email):
                 raise InvalidEmailError()
             return True
-        except InvalidEmailError as e:
+        except ex.InvalidEmailError as e:
             return False
 
     def __add__(self, other):
