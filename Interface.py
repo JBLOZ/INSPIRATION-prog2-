@@ -1,3 +1,24 @@
+'''
+Este módulo implementa una interfaz gráfica utilizando la biblioteca tkinter.
+Incluye clases para manejar la ventana principal, inicio de sesión, registro, y funcionalidades de usuario como crear y ver inspirations.
+
+Módulos utilizados:
+    - tkinter
+    - PIL
+    - Users (clase User y Data)
+    - Inspiration
+
+Clases:
+    - Principal
+    - Login
+    - Registrarse
+    - Entrar
+    - Escribir
+    - ShowInspirations
+    - InspirationInterfaz
+    - BuscarPersona
+'''
+
 import tkinter
 from tkinter import Tk, Label, Entry, Frame, messagebox, mainloop, Button, LabelFrame, Scrollbar, Canvas
 from tkinter.scrolledtext import ScrolledText
@@ -6,7 +27,16 @@ from Users import User, Data
 from Inspiration import Inspiration
 
 class Principal:
+    '''
+        Clase que define la ventana principal de la aplicación.
+
+        Métodos:
+            - __init__: Inicializa la ventana principal.
+            - abrir_iniciar: Abre la ventana de inicio de sesión.
+            - abrir_reg: Abre la ventana de registro.
+        '''
     def __init__(self):
+        """Inicializa la ventana principal y su contenido."""
         Data().lectura_usuarios()
         self.ventana = Tk()
         self.ventana.geometry('500x700')
@@ -68,15 +98,26 @@ class Principal:
         mainloop()
 
     def abrir_iniciar(self):
+        '''Destruye la ventana actual y abre la ventana de inicio de sesión.'''
         self.ventana.destroy()
         Login()
 
     def abrir_reg(self):
+        '''Destruye la ventana actual y abre la ventana de registro.'''
         self.ventana.destroy()
         Registrarse()
 
 class Login:
-    def __init__(self):
+   '''
+        Clase que define la ventana de inicio de sesión.
+
+        Métodos:
+            - __init__: Inicializa la ventana de inicio de sesión.
+            - retroceder1: Regresa a la ventana principal.
+            - acceso: Verifica las credenciales del usuario.
+        '''
+   def __init__(self):
+        '''Inicializa la ventana de inicio de sesión y su contenido.'''
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')
@@ -145,10 +186,12 @@ class Login:
 
         mainloop()
 
-    def retroceder1(self):
+   def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
         self.ventana.destroy()
         Principal()
-    def acceso(self):
+   def acceso(self):
+        '''Verifica las credenciales del usuario y permite el acceso si son correctas.'''
         try:
             nombre = self.entradas[0].get()
             contra = self.entradas[1].get()
@@ -171,7 +214,16 @@ class Login:
             print(e)
 
 class Registrarse:
+    '''
+       Clase que define la ventana de registro de usuario.
+
+       Métodos:
+           - __init__: Inicializa la ventana de registro.
+           - retroceder1: Regresa a la ventana principal.
+           - verificar: Verifica los datos de registro del usuario.
+       '''
     def __init__(self):
+        """Inicializa la ventana de registro y su contenido."""
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')
@@ -242,10 +294,12 @@ class Registrarse:
         mainloop()
 
     def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
         self.ventana.destroy()
         Principal()
 
     def verificar(self):
+        '''Verifica los datos de registro y crea un nuevo usuario si son válidos.'''
         nombre = self.entradas[0].get()
         user = self.entradas[1].get()
         edad = self.entradas[2].get()
@@ -283,8 +337,18 @@ class Registrarse:
             Entrar(AVerificar)
 
 class Entrar:
-    def __init__(self, usuario):
+    '''
+        Clase que define la ventana principal una vez el usuario ha iniciado sesión.
 
+        Métodos:
+            - __init__: Inicializa la ventana principal después del inicio de sesión.
+            - escribir: Abre la ventana para escribir un inspiration.
+            - mostrar: Muestra los inspirations del usuario.
+            - buscar_persona: Abre la ventana para buscar inspirations de otros usuarios.
+            - retroceder: Regresa a la ventana de inicio de sesión.
+        '''
+    def __init__(self, usuario):
+        '''Inicializa la ventana principal después del inicio de sesión y su contenido.'''
         self.usuario = usuario
         self.ventana = Tk()
         self.ventana.geometry('500x700')
@@ -347,7 +411,7 @@ class Entrar:
 
         # Botones
         self.botones = []
-        self.nom_bot = ['Crear Inspiration','Mis Inspirations', 'Inspirations', 'Buscar persona']
+        self.nom_bot = ['Crear Inspiration','Inspirations', 'Mis Inspirations', 'Buscar persona']
         self.listita =[self.crear_inspiration, self.mostrar_mis_inspirations, self.mostrar_inspirations,self.buscar_personas]
         for i in range(4):
             self.boton = Button(self.frames[1],
@@ -367,23 +431,36 @@ class Entrar:
         mainloop()
 
     def crear_inspiration(self):
+        '''Abre la ventana para escribir un nuevo inspiration.'''
         self.ventana.destroy()
         Escribir(self.usuario)
 
     def mostrar_inspirations(self):
+        '''Abre la ventana para mostrar los inspirations del usuario.'''
         self.ventana.destroy()
         ShowInspirations(self.usuario, False)
 
     def mostrar_mis_inspirations(self):
+        '''Abre la ventana para mostrar los inspirations del usuario.'''
         self.ventana.destroy()
         ShowInspirations(self.usuario, True)
 
     def buscar_personas(self):
+        '''Abre la ventana para buscar otros usuarios.'''
         self.ventana.destroy()
         BuscarPersona(self.usuario)
 
 class Escribir():
+    '''
+       Clase que define la ventana para escribir un nuevo inspiration.
+
+       Métodos:
+           - __init__: Inicializa la ventana para escribir un inspiration.
+           - retroceder: Regresa a la ventana principal.
+           - publicar: Publica el inspiration escrito.
+       '''
     def __init__(self, usuario):
+        '''Inicializa la ventana para escribir un inspiration y su contenido.'''
 
         self.usuario = usuario
         self.ventana = Tk()
@@ -420,21 +497,22 @@ class Escribir():
 
         self.retroceder = Button(self.ventana,
                                  text='↩',
-                                 width=5,
+                                 width=2,
                                  font=('Times', 15),
                                  bg='lightsalmon',
                                  fg='#fff',
                                  command=self.retroceder1)
         self.retroceder.pack(expand=True, side='right')
-        self.retroceder.place(x=0, y=1, sticky='w')
 
         mainloop()
 
     def retroceder1(self):
+        ''' Destruye la ventana actual y regresa a la ventana principal. '''
         self.ventana.destroy()
         Entrar(self.usuario)
 
     def publicar(self):
+        '''Publica la inspiración escrita y la guarda en el perfil del usuario.'''
         texto = self.texto.get("1.0", tkinter.END).strip()
         self.usuario.create_inspiration(texto)
         print(texto)
@@ -443,7 +521,15 @@ class Escribir():
 
 
 class ShowInspirations:
+    '''
+        Clase que define la ventana para mostrar los inspirations del usuario.
+
+        Métodos:
+            - __init__: Inicializa la ventana para mostrar los inspirations.
+            - retroceder: Regresa a la ventana principal.
+        '''
     def __init__(self, usuario, mios=False):
+        '''Inicializa la ventana para mostrar los inspìrations del usuario y su contenido.'''
         fondo = 'antiquewhite'
         self.usuario = usuario
 
@@ -496,11 +582,20 @@ class ShowInspirations:
         mainloop()
 
     def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
         self.ventana.destroy()
         Entrar(self.usuario)
 
 
 class InspirationInterfaz:
+    '''
+        Clase que define los inspirations como etiquetas.
+
+        Métodos:
+        - __init__: Inicializa la ventana.
+        - bt_me_gusta: registra y actualiza el estado de "Me gusta" de un inspiration.
+    '''
+
     def __init__(self, padre, inspiration, fondo):
         self.padre = padre
         self.inspiration = inspiration
@@ -557,6 +652,16 @@ class InspirationInterfaz:
 
 
 class BuscarPersona:
+    '''
+        Clase que define la ventana para buscar usuarios registrados y seguir o dejar de seguir..
+
+        Métodos:
+            - __init__: Inicializa la ventana para buscar inspirations de otros usuarios.
+            - mostrar_usuarios: muestra los usuarios según el carácter introducido.
+            - retroceder: Regresa a la ventana principal.
+            - seguir_usuario: permite seguir a un usuario.
+            - dejar_seguir_usuario: permite dejar de seguir a un usuario.
+        '''
     def __init__(self, usuario):
         self.usuario = usuario
         self.data = Data()
@@ -662,3 +767,4 @@ class BuscarPersona:
         self.mostrar_usuarios()
 
 
+Principal()
