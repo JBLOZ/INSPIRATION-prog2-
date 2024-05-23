@@ -1,3 +1,24 @@
+'''
+Este módulo implementa una interfaz gráfica utilizando la biblioteca tkinter.
+Incluye clases para manejar la ventana principal, inicio de sesión, registro, y funcionalidades de usuario como crear y ver inspirations.
+
+Módulos utilizados:
+    - tkinter
+    - PIL
+    - Users (clase User y Data)
+    - Inspiration
+
+Clases:
+    - Principal
+    - Login
+    - Registrarse
+    - Entrar
+    - Escribir
+    - ShowInspirations
+    - InspirationInterfaz
+    - BuscarPersona
+'''
+
 import tkinter
 from tkinter import Tk, Label, Entry, Frame, messagebox, mainloop, Button, LabelFrame, Scrollbar, Canvas
 from tkinter.scrolledtext import ScrolledText
@@ -6,7 +27,16 @@ from Users import User, Data
 from Inspiration import Inspiration
 
 class Principal:
+    '''
+        Clase que define la ventana principal de la aplicación.
+
+        Métodos:
+            - __init__: Inicializa la ventana principal.
+            - abrir_iniciar: Abre la ventana de inicio de sesión.
+            - abrir_reg: Abre la ventana de registro.
+        '''
     def __init__(self):
+        """Inicializa la ventana principal y su contenido."""
         Data().lectura_usuarios()
         self.ventana = Tk()
         self.ventana.geometry('500x700')
@@ -68,15 +98,26 @@ class Principal:
         mainloop()
 
     def abrir_iniciar(self):
+        '''Destruye la ventana actual y abre la ventana de inicio de sesión.'''
         self.ventana.destroy()
         Login()
 
     def abrir_reg(self):
+        '''Destruye la ventana actual y abre la ventana de registro.'''
         self.ventana.destroy()
         Registrarse()
 
 class Login:
-    def __init__(self):
+   '''
+        Clase que define la ventana de inicio de sesión.
+
+        Métodos:
+            - __init__: Inicializa la ventana de inicio de sesión.
+            - retroceder1: Regresa a la ventana principal.
+            - acceso: Verifica las credenciales del usuario.
+        '''
+   def __init__(self):
+        '''Inicializa la ventana de inicio de sesión y su contenido.'''
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')
@@ -133,9 +174,24 @@ class Login:
 
         self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
+        self.retroceder = Button(self.frame_inferior,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 15),
+                                 bg='salmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
 
-    def acceso(self):
+   def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
+        self.ventana.destroy()
+        Principal()
+   def acceso(self):
+        '''Verifica las credenciales del usuario y permite el acceso si son correctas.'''
         try:
             nombre = self.entradas[0].get()
             contra = self.entradas[1].get()
@@ -158,7 +214,16 @@ class Login:
             print(e)
 
 class Registrarse:
+    '''
+       Clase que define la ventana de registro de usuario.
+
+       Métodos:
+           - __init__: Inicializa la ventana de registro.
+           - retroceder1: Regresa a la ventana principal.
+           - verificar: Verifica los datos de registro del usuario.
+       '''
     def __init__(self):
+        """Inicializa la ventana de registro y su contenido."""
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')
@@ -216,9 +281,25 @@ class Registrarse:
 
         self.boton3.grid(row=6, column=0, columnspan=2, pady=20)
 
+        self.retroceder = Button(self.frame_inferior,
+                                text='↩',
+                                width=5,
+                                font=('Times', 15),
+                                bg='salmon',
+                                fg='#fff',
+                                command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
 
+    def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
+        self.ventana.destroy()
+        Principal()
+
     def verificar(self):
+        '''Verifica los datos de registro y crea un nuevo usuario si son válidos.'''
         nombre = self.entradas[0].get()
         user = self.entradas[1].get()
         edad = self.entradas[2].get()
@@ -229,7 +310,7 @@ class Registrarse:
         AVerificar = User(name=nombre, nickname=user, email=email, _password=contra)
 
         if not(AVerificar.check_name()):
-            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
+            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido. Debe empezar con mayúscula')
 
         elif not(AVerificar.check_nickname()):
             messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
@@ -256,8 +337,18 @@ class Registrarse:
             Entrar(AVerificar)
 
 class Entrar:
-    def __init__(self, usuario):
+    '''
+        Clase que define la ventana principal una vez el usuario ha iniciado sesión.
 
+        Métodos:
+            - __init__: Inicializa la ventana principal después del inicio de sesión.
+            - escribir: Abre la ventana para escribir un inspiration.
+            - mostrar: Muestra los inspirations del usuario.
+            - buscar_persona: Abre la ventana para buscar inspirations de otros usuarios.
+            - retroceder: Regresa a la ventana de inicio de sesión.
+        '''
+    def __init__(self, usuario):
+        '''Inicializa la ventana principal después del inicio de sesión y su contenido.'''
         self.usuario = usuario
         self.ventana = Tk()
         self.ventana.geometry('500x700')
@@ -320,7 +411,7 @@ class Entrar:
 
         # Botones
         self.botones = []
-        self.nom_bot = ['Crear Inspiration','Mis Inspirations', 'Inspirations', 'Buscar persona']
+        self.nom_bot = ['Crear Inspiration','Inspirations', 'Mis Inspirations', 'Buscar persona']
         self.listita =[self.crear_inspiration, self.mostrar_mis_inspirations, self.mostrar_inspirations,self.buscar_personas]
         for i in range(4):
             self.boton = Button(self.frames[1],
@@ -340,22 +431,36 @@ class Entrar:
         mainloop()
 
     def crear_inspiration(self):
+        '''Abre la ventana para escribir un nuevo inspiration.'''
         self.ventana.destroy()
         Escribir(self.usuario)
 
     def mostrar_inspirations(self):
+        '''Abre la ventana para mostrar los inspirations del usuario.'''
         self.ventana.destroy()
         ShowInspirations(self.usuario, False)
 
     def mostrar_mis_inspirations(self):
+        '''Abre la ventana para mostrar los inspirations del usuario.'''
         self.ventana.destroy()
         ShowInspirations(self.usuario, True)
 
     def buscar_personas(self):
-        pass
+        '''Abre la ventana para buscar otros usuarios.'''
+        self.ventana.destroy()
+        BuscarPersona(self.usuario)
 
 class Escribir():
+    '''
+       Clase que define la ventana para escribir un nuevo inspiration.
+
+       Métodos:
+           - __init__: Inicializa la ventana para escribir un inspiration.
+           - retroceder: Regresa a la ventana principal.
+           - publicar: Publica el inspiration escrito.
+       '''
     def __init__(self, usuario):
+        '''Inicializa la ventana para escribir un inspiration y su contenido.'''
 
         self.usuario = usuario
         self.ventana = Tk()
@@ -390,9 +495,24 @@ class Escribir():
         self.boton_publicar.pack(expand=True,side='right' )
         self.fondo.place(x=0, y=1)
 
+        self.retroceder = Button(self.ventana,
+                                 text='↩',
+                                 width=2,
+                                 font=('Times', 15),
+                                 bg='lightsalmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.pack(expand=True, side='right')
 
         mainloop()
+
+    def retroceder1(self):
+        ''' Destruye la ventana actual y regresa a la ventana principal. '''
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
     def publicar(self):
+        '''Publica la inspiración escrita y la guarda en el perfil del usuario.'''
         texto = self.texto.get("1.0", tkinter.END).strip()
         self.usuario.create_inspiration(texto)
         print(texto)
@@ -401,7 +521,15 @@ class Escribir():
 
 
 class ShowInspirations:
+    '''
+        Clase que define la ventana para mostrar los inspirations del usuario.
+
+        Métodos:
+            - __init__: Inicializa la ventana para mostrar los inspirations.
+            - retroceder: Regresa a la ventana principal.
+        '''
     def __init__(self, usuario, mios=False):
+        '''Inicializa la ventana para mostrar los inspìrations del usuario y su contenido.'''
         fondo = 'antiquewhite'
         self.usuario = usuario
 
@@ -409,43 +537,74 @@ class ShowInspirations:
         self.ventana.geometry('500x700')
         self.ventana.title('Inspirations')
 
-        # Crear un widget Scrollbar
+
         self.scrollbar = Scrollbar(self.ventana)
         self.scrollbar.pack(side='right', fill='y')
 
-        # Crear un Canvas para crear un área en la que estará el texto
+
         self.canvas = Canvas(self.ventana)
         self.canvas.pack(fill='both', expand=True)
 
-        # Crear un frame dentro del área donde se encuentra el texto
+
         self.frame_textos = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw')
 
-        if mios:
+        if mios :
             self.textos = self.usuario.listaInspirations
+
         else:
             self.textos = self.usuario.show_inspirations()
 
         try:
             if len(self.textos) == 0:
+                Label(self.canvas,
+                      text='No hay inspirations',
+                      font=('Times', 18)).pack(expand=True)
+
                 raise ValueError('No hay inspirations')
+
             else:
-                self.textos = self.usuario.show_inspirations()
+
                 for inspiration in self.textos:
                     InspirationInterfaz(self, inspiration, fondo)
         except ValueError as e:
             print(e)
 
+        self.retroceder = Button(self.canvas,
+                                 text='↩',
+                                 width=2,
+                                 height=1,
+                                 font=('Times', 7),
+                                 bg='brown',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.place(x=0, y=1)
+
+        mainloop()
+
+    def retroceder1(self):
+        '''Destruye la ventana actual y regresa a la ventana principal.'''
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
 
 class InspirationInterfaz:
+    '''
+        Clase que define los inspirations como etiquetas.
+
+        Métodos:
+        - __init__: Inicializa la ventana.
+        - bt_me_gusta: registra y actualiza el estado de "Me gusta" de un inspiration.
+    '''
+
     def __init__(self, padre, inspiration, fondo):
         self.padre = padre
         self.inspiration = inspiration
 
         self.frame = LabelFrame(self.padre.frame_textos, text=f'@{self.inspiration.user.nickname}')
-        self.frame.pack(pady=15, padx=15)
+        self.frame.pack(pady=15, padx=20)
 
-        # Etiqueta para mostrar la fecha en la parte superior derecha
+
         self.fecha_label = Label(self.frame,
                                     text=inspiration.fecha.strftime('%H:%M    %m-%d'),
                                     font=('Times', 9),
@@ -478,14 +637,14 @@ class InspirationInterfaz:
                                 fg='black')
         self.labelMg.pack(side='left')
 
-        self.botonMg.pack(side='left')  # Empaquetar el botón en una línea separada
+        self.botonMg.pack(side='left')
 
         self.boton2 = Button(self.frame,
                                 text='COMENTAR',
                                 font=('Times', 9),
                                 bg=fondo,
                                 fg='black')
-        self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
+        self.boton2.pack(side='right')
 
     def bt_me_gusta(self):
         self.padre.usuario.me_gusta(self.inspiration)
@@ -493,12 +652,123 @@ class InspirationInterfaz:
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
+class BuscarPersona:
+    '''
+        Clase que define la ventana para buscar usuarios registrados y seguir o dejar de seguir..
+
+        Métodos:
+            - __init__: Inicializa la ventana para buscar inspirations de otros usuarios.
+            - mostrar_usuarios: muestra los usuarios según el carácter introducido.
+            - retroceder: Regresa a la ventana principal.
+            - seguir_usuario: permite seguir a un usuario.
+            - dejar_seguir_usuario: permite dejar de seguir a un usuario.
+        '''
+    def __init__(self, usuario):
+        self.usuario = usuario
+        self.data = Data()
+        self.data.lectura_usuarios()
+
+        self.ventana = Tk()
+        self.ventana.geometry('500x700')
+        self.ventana.title('BUSCADOR')
+        self.ventana.configure(bg='antiquewhite')
+
+        self.frame_top = Frame(self.ventana, bg='antiquewhite')
+        self.frame_top.pack(pady=10)
+
+        # Cargar la imagen
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((25, 25))
+        self.cargar = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frame_top, image=self.cargar, bg='antiquewhite')
+        self.fondo.grid(row=0, column=0, padx=5, pady=10, sticky='w')
+
+        self.buscador = Entry(self.frame_top, width=14, bg='mistyrose', font=('Times', 14) )
+        self.buscador.grid(row=0, column=1, padx=5, pady=10)
+
+        self.buscar_boton = Button(self.frame_top, text='Buscar',bg = 'lightsalmon', command=self.mostrar_usuarios)
+        self.buscar_boton.grid(row=0, column=2, padx=5, pady=10)
+
+        self.canvas_bottom = Canvas(self.ventana, bg='antiquewhite')
+        self.canvas_bottom.pack(side='left', fill='both', expand=True)
+
+        self.scrollbar = Scrollbar(self.ventana, orient='vertical', bg='antiquewhite',command=self.canvas_bottom.yview)
+        self.scrollbar.pack(side='right', fill='y')
+
+        self.canvas_bottom.configure(yscrollcommand=self.scrollbar.set)
+
+        self.frame_bottom = Frame(self.canvas_bottom, bg='antiquewhite')
+        self.canvas_bottom.create_window((0, 0), window=self.frame_bottom, anchor='nw')
+
+        self.frame_bottom.bind('<Configure>', self.on_frame_configure)
+
+        self.retroceder = Button(self.ventana,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 10),
+                                 bg='salmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.place(x=0, y=1)
+
+        mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
+    def on_frame_configure(self, event):
+        self.canvas_bottom.configure(scrollregion=self.canvas_bottom.bbox("all"))
+
+    def mostrar_usuarios(self):
+        # Clear previous results
+        for widget in self.frame_bottom.winfo_children():
+            widget.destroy()
+
+        # Get the text from the search entry
+        search_text = self.buscador.get().lower()
+        self.lista_usuarios = []
+        i = 0
+
+        search_usu =  User().search_user(search_text)
+        if self.usuario.nickname in search_usu:
 
 
+            search_usu.remove(self.usuario.nickname)
+        else:
+            search_usu == search_usu
 
 
+        for usuario in search_usu:
+            Data().lectura_usuarios()
+            etiqueta = Label(self.frame_bottom, bg='antiquewhite',text=usuario)
+            etiqueta.grid(row=i, column=0, padx=5, pady=5, sticky='w')
+
+            if Data.diccUsers[usuario] in self.usuario.listaSiguiendo:
+                texto = 'Dejar de seguir'
+                command = lambda u=usuario: self.dejar_seguir_usuario(u)
+            else:
+                texto = 'Seguir'
+                command = lambda u=usuario: self.seguir_usuario(u)
+
+            seguir_boton = Button(self.frame_bottom,bg='peachpuff',text=texto, command=command)
+            seguir_boton.grid(row=i, column=1, padx=5, pady=5, sticky='w')
+
+            self.lista_usuarios.append(usuario)
+            i += 1
 
 
+        self.frame_bottom.update_idletasks()
+        self.canvas_bottom.configure(scrollregion=self.canvas_bottom.bbox("all"))
 
+    def seguir_usuario(self, usuario_seguir):
+        Data().lectura_usuarios()
+        us = Data.diccUsers[usuario_seguir]
+        self.usuario.follow(us)
+        self.mostrar_usuarios()
 
-
+    def dejar_seguir_usuario(self, usuario_dejar):
+        Data().lectura_usuarios()
+        us = Data.diccUsers[usuario_dejar]
+        self.usuario.unfollow(us)
+        self.mostrar_usuarios()
