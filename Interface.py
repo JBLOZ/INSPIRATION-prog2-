@@ -133,8 +133,21 @@ class Login:
 
         self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
+        self.retroceder = Button(self.frame_inferior,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 15),
+                                 bg='salmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
 
+    def retroceder1(self):
+        self.ventana.destroy()
+        Principal()
     def acceso(self):
         try:
             nombre = self.entradas[0].get()
@@ -216,7 +229,21 @@ class Registrarse:
 
         self.boton3.grid(row=6, column=0, columnspan=2, pady=20)
 
+        self.retroceder = Button(self.frame_inferior,
+                                text='↩',
+                                width=5,
+                                font=('Times', 15),
+                                bg='salmon',
+                                fg='#fff',
+                                command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Principal()
 
     def verificar(self):
         nombre = self.entradas[0].get()
@@ -229,7 +256,7 @@ class Registrarse:
         AVerificar = User(name=nombre, nickname=user, email=email, _password=contra)
 
         if not(AVerificar.check_name()):
-            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
+            messagebox.showinfo('Acceso incorrecto', 'Nombre no válido. Debe empezar con mayúscula')
 
         elif not(AVerificar.check_nickname()):
             messagebox.showinfo('Acceso incorrecto', 'Nombre de usuario no válido')
@@ -352,7 +379,8 @@ class Entrar:
         ShowInspirations(self.usuario, True)
 
     def buscar_personas(self):
-        pass
+        self.ventana.destroy()
+        BuscarPersona(self.usuario)
 
 class Escribir():
     def __init__(self, usuario):
@@ -390,8 +418,22 @@ class Escribir():
         self.boton_publicar.pack(expand=True,side='right' )
         self.fondo.place(x=0, y=1)
 
+        self.retroceder = Button(self.ventana,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 15),
+                                 bg='lightsalmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.pack(expand=True, side='right')
+        self.retroceder.place(x=0, y=1, sticky='w')
 
         mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
     def publicar(self):
         texto = self.texto.get("1.0", tkinter.END).strip()
         self.usuario.create_inspiration(texto)
@@ -421,20 +463,41 @@ class ShowInspirations:
         self.frame_textos = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw')
 
-        if mios:
+        if mios :
             self.textos = self.usuario.listaInspirations
         else:
             self.textos = self.usuario.show_inspirations()
 
         try:
             if len(self.textos) == 0:
+                Label(self.canvas,
+                      text='No hay inspirations',
+                      font=('Times', 18)).pack(expand=True)
+
                 raise ValueError('No hay inspirations')
+
             else:
                 self.textos = self.usuario.show_inspirations()
                 for inspiration in self.textos:
                     InspirationInterfaz(self, inspiration, fondo)
         except ValueError as e:
             print(e)
+
+        self.retroceder = Button(self.canvas,
+                                 text='↩',
+                                 width=2,
+                                 height=1,
+                                 font=('Times', 7),
+                                 bg='brown',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.place(x=0, y=1)
+
+        mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
 
 
 class InspirationInterfaz:
@@ -443,7 +506,7 @@ class InspirationInterfaz:
         self.inspiration = inspiration
 
         self.frame = LabelFrame(self.padre.frame_textos, text=f'@{self.inspiration.user.nickname}')
-        self.frame.pack(pady=15, padx=15)
+        self.frame.pack(pady=15, padx=20)
 
         # Etiqueta para mostrar la fecha en la parte superior derecha
         self.fecha_label = Label(self.frame,
@@ -493,12 +556,109 @@ class InspirationInterfaz:
         self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
+class BuscarPersona:
+    def __init__(self, usuario):
+        self.usuario = usuario
+        self.data = Data()
+        self.data.lectura_usuarios()
 
+        self.ventana = Tk()
+        self.ventana.geometry('500x700')
+        self.ventana.title('BUSCADOR')
+        self.ventana.configure(bg='antiquewhite')
 
+        self.frame_top = Frame(self.ventana, bg='antiquewhite')
+        self.frame_top.pack(pady=10)
 
+        # Cargar la imagen
+        self.img = Image.open('imagen2.png')
+        self.img = self.img.resize((25, 25))
+        self.cargar = ImageTk.PhotoImage(self.img)
+        self.fondo = Label(self.frame_top, image=self.cargar, bg='antiquewhite')
+        self.fondo.grid(row=0, column=0, padx=5, pady=10, sticky='w')
 
+        self.buscador = Entry(self.frame_top, width=14, bg='mistyrose', font=('Times', 14) )
+        self.buscador.grid(row=0, column=1, padx=5, pady=10)
 
+        self.buscar_boton = Button(self.frame_top, text='Buscar',bg = 'lightsalmon', command=self.mostrar_usuarios)
+        self.buscar_boton.grid(row=0, column=2, padx=5, pady=10)
 
+        self.canvas_bottom = Canvas(self.ventana, bg='antiquewhite')
+        self.canvas_bottom.pack(side='left', fill='both', expand=True)
 
+        self.scrollbar = Scrollbar(self.ventana, orient='vertical', bg='antiquewhite',command=self.canvas_bottom.yview)
+        self.scrollbar.pack(side='right', fill='y')
 
+        self.canvas_bottom.configure(yscrollcommand=self.scrollbar.set)
 
+        self.frame_bottom = Frame(self.canvas_bottom, bg='antiquewhite')
+        self.canvas_bottom.create_window((0, 0), window=self.frame_bottom, anchor='nw')
+
+        self.frame_bottom.bind('<Configure>', self.on_frame_configure)
+
+        self.retroceder = Button(self.ventana,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 10),
+                                 bg='salmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.place(x=0, y=1)
+
+        mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
+    def on_frame_configure(self, event):
+        self.canvas_bottom.configure(scrollregion=self.canvas_bottom.bbox("all"))
+
+    def mostrar_usuarios(self):
+        # Clear previous results
+        for widget in self.frame_bottom.winfo_children():
+            widget.destroy()
+
+        # Get the text from the search entry
+        search_text = self.buscador.get().lower()
+        self.lista_usuarios = []
+        i = 0
+
+        search_usu =  User().search_user(search_text)
+        if self.usuario.nickname in search_usu:
+            search_usu.remove(self.usuario.nickname)
+        else:
+            search_usu == search_usu
+
+        # Add matching users to the result frame
+        for usuario in search_usu:
+
+            etiqueta = Label(self.frame_bottom, bg='antiquewhite',text=usuario)
+            etiqueta.grid(row=i, column=0, padx=5, pady=5, sticky='w')
+
+            if usuario in self.usuario.listaSiguiendo:
+                texto = 'Dejar de seguir'
+                command = lambda u=usuario: self.dejar_seguir_usuario(u)
+            else:
+                texto = 'Seguir'
+                command = lambda u=usuario: self.seguir_usuario(u)
+
+            seguir_boton = Button(self.frame_bottom,bg='peachpuff',text=texto, command=command)
+            seguir_boton.grid(row=i, column=1, padx=5, pady=5, sticky='w')
+
+            self.lista_usuarios.append(usuario)
+            i += 1
+
+            # Update the scroll region
+        self.frame_bottom.update_idletasks()
+        self.canvas_bottom.configure(scrollregion=self.canvas_bottom.bbox("all"))
+
+    def seguir_usuario(self, usuario_seguir):
+        self.usuario.follow(usuario_seguir)
+        self.mostrar_usuarios()
+
+    def dejar_seguir_usuario(self, usuario_dejar):
+        self.usuario.unfollow(usuario_dejar)
+        self.mostrar_usuarios()
+
+Principal()

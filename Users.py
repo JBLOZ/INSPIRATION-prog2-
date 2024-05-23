@@ -112,7 +112,7 @@ class User:
 
         for i in Data.diccUsers.items():
             if cadena.lower() in i[1].nickname.lower():
-                lista.append(i)
+                lista.append(i[1].nickname)
         try:
             if len(lista) == 0:
                 raise ex.UserNotFoundError()
