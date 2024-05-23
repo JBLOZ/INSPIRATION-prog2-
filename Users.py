@@ -3,7 +3,37 @@ import pickle as plk
 import Exceptions as ex
 from Inspiration import Inspiration
 import csv
+
+
+
 class User:
+    '''
+        Clase que define un usuario de la red social.
+        Atributos de objeto:
+            - name: Nombre del usuario
+            - nickname: Nickname del usuario
+            - email: Email del usuario
+            - _password: Contraseña del usuario
+            - listaSeguidores: Lista de usuarios que siguen al usuario
+            - listaSiguiendo: Lista de usuarios a los que sigue el usuario
+            - listaInspirations: Lista de inspirations del usuario
+
+        Métodos:
+            - check_name: Verifica que el nombre del usuario sea válido
+            - check_nickname: Verifica que el nickname del usuario sea válido
+            - check_password: Verifica que la contraseña del usuario sea válida
+            - check_email: Verifica que el email del usuario sea válido
+            - __add__: Método agregado para seguir a otro usuario
+            - __sub__: Método agregado para dejar de seguir a otro usuario
+            - follow: Método para seguir a otro usuario
+            - unfollow: Método para dejar de seguir a otro usuario
+            - create_inspiration: Método para crear una inspiration
+            - show_inspirations: Método para mostrar los inspirations de los usuarios seguidos
+            - search_user: Método para buscar un usuario por su nickname
+            - me_gusta: Método para dar "me gusta" a una inspiración
+            - guardar_en_csv: Método para guardar los inspirations del usuario en un archivo CSV
+
+    '''
     def __init__(self, name=None, nickname=None, email=None, _password=None):
         self.name = name
         self.nickname = nickname
@@ -145,6 +175,19 @@ class User:
 
 
 class Data:
+    '''
+    Clase que maneja la lectura y escritura de los usuarios en un archivo pickle y
+    escribe un archivo CSV con los usuarios y contraseñas.
+    Atributos generales:
+        - archivopk: Nombre del archivo pickle
+        - user_passw: Nombre del archivo CSV
+        - diccUsers: Diccionario con los usuarios de la red social
+    Métodos:
+        - lectura_usuarios: Método para leer los usuarios del archivo pickle
+        - guardar_usuarios: Método para guardar los usuarios en el archivo pickle
+        - guardar_user_passw: Método para guardar los usuarios y contraseñas en un archivo CSV
+
+    '''
 
     archivopk = 'usuarios.pickle'
     user_passw = 'user_passw.csv'
@@ -184,13 +227,6 @@ class Data:
 
 
 
-
-if __name__ == '__main__':
-    Data().lectura_usuarios()
-    Data.diccUsers['admin'] + Data.diccUsers['sarandonga']
-    Data.diccUsers['sarandonga'] + Data.diccUsers['jbl42']
-    Data.diccUsers['sarandonga'] + Data.diccUsers['admin']
-    Data.diccUsers['jbl42'] + Data.diccUsers['admin']
 
 
 

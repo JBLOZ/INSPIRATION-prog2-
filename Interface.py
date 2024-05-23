@@ -537,20 +537,21 @@ class ShowInspirations:
         self.ventana.geometry('500x700')
         self.ventana.title('Inspirations')
 
-        # Crear un widget Scrollbar
+
         self.scrollbar = Scrollbar(self.ventana)
         self.scrollbar.pack(side='right', fill='y')
 
-        # Crear un Canvas para crear un área en la que estará el texto
+
         self.canvas = Canvas(self.ventana)
         self.canvas.pack(fill='both', expand=True)
 
-        # Crear un frame dentro del área donde se encuentra el texto
+
         self.frame_textos = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw')
 
         if mios :
             self.textos = self.usuario.listaInspirations
+
         else:
             self.textos = self.usuario.show_inspirations()
 
@@ -563,7 +564,7 @@ class ShowInspirations:
                 raise ValueError('No hay inspirations')
 
             else:
-                self.textos = self.usuario.show_inspirations()
+
                 for inspiration in self.textos:
                     InspirationInterfaz(self, inspiration, fondo)
         except ValueError as e:
@@ -603,7 +604,7 @@ class InspirationInterfaz:
         self.frame = LabelFrame(self.padre.frame_textos, text=f'@{self.inspiration.user.nickname}')
         self.frame.pack(pady=15, padx=20)
 
-        # Etiqueta para mostrar la fecha en la parte superior derecha
+
         self.fecha_label = Label(self.frame,
                                     text=inspiration.fecha.strftime('%H:%M    %m-%d'),
                                     font=('Times', 9),
@@ -636,14 +637,14 @@ class InspirationInterfaz:
                                 fg='black')
         self.labelMg.pack(side='left')
 
-        self.botonMg.pack(side='left')  # Empaquetar el botón en una línea separada
+        self.botonMg.pack(side='left')
 
         self.boton2 = Button(self.frame,
                                 text='COMENTAR',
                                 font=('Times', 9),
                                 bg=fondo,
                                 fg='black')
-        self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
+        self.boton2.pack(side='right')
 
     def bt_me_gusta(self):
         self.padre.usuario.me_gusta(self.inspiration)
@@ -731,17 +732,19 @@ class BuscarPersona:
 
         search_usu =  User().search_user(search_text)
         if self.usuario.nickname in search_usu:
+
+
             search_usu.remove(self.usuario.nickname)
         else:
             search_usu == search_usu
 
-        # Add matching users to the result frame
-        for usuario in search_usu:
 
+        for usuario in search_usu:
+            Data().lectura_usuarios()
             etiqueta = Label(self.frame_bottom, bg='antiquewhite',text=usuario)
             etiqueta.grid(row=i, column=0, padx=5, pady=5, sticky='w')
 
-            if usuario in self.usuario.listaSiguiendo:
+            if Data.diccUsers[usuario] in self.usuario.listaSiguiendo:
                 texto = 'Dejar de seguir'
                 command = lambda u=usuario: self.dejar_seguir_usuario(u)
             else:
@@ -754,14 +757,18 @@ class BuscarPersona:
             self.lista_usuarios.append(usuario)
             i += 1
 
-            # Update the scroll region
+
         self.frame_bottom.update_idletasks()
         self.canvas_bottom.configure(scrollregion=self.canvas_bottom.bbox("all"))
 
     def seguir_usuario(self, usuario_seguir):
-        self.usuario.follow(usuario_seguir)
+        Data().lectura_usuarios()
+        us = Data.diccUsers[usuario_seguir]
+        self.usuario.follow(us)
         self.mostrar_usuarios()
 
     def dejar_seguir_usuario(self, usuario_dejar):
-        self.usuario.unfollow(usuario_dejar)
+        Data().lectura_usuarios()
+        us = Data.diccUsers[usuario_dejar]
+        self.usuario.unfollow(us)
         self.mostrar_usuarios()
