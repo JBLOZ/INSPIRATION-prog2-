@@ -765,6 +765,3 @@ class BuscarPersona:
     def dejar_seguir_usuario(self, usuario_dejar):
         self.usuario.unfollow(usuario_dejar)
         self.mostrar_usuarios()
-
-
-Principal()
