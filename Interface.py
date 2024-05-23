@@ -5,11 +5,9 @@ from PIL import ImageTk, Image
 from Users import User, Data
 from Inspiration import Inspiration
 
-
-Data().lectura_usuarios()
-
 class Principal:
     def __init__(self):
+        Data().lectura_usuarios()
         self.ventana = Tk()
         self.ventana.geometry('500x700')
         self.ventana.title('INSPIRATION')  # Titulo de la ventana
@@ -135,6 +133,16 @@ class Login:
 
         self.boton2.grid(row=3, column=0, columnspan=2, pady=100)
 
+        self.retroceder= Button(self.frame_inferior,
+                                text='↩',
+                                width=5,
+                                font=('Times', 15),
+                                bg='salmon',
+                                fg='#fff',
+                                command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
 
     def acceso(self):
@@ -158,6 +166,10 @@ class Login:
         except ValueError as e:
             messagebox.showinfo('Acceso incorrecto', 'Algún dato es erroneo')
             print(e)
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Principal()
 
 class Registrarse:
     def __init__(self):
@@ -218,8 +230,21 @@ class Registrarse:
 
         self.boton3.grid(row=6, column=0, columnspan=2, pady=20)
 
+        self.retroceder = Button(self.frame_inferior,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 15),
+                                 bg='salmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+
+        self.retroceder.place(x=0, y=1)
+
         mainloop()
 
+    def retroceder1(self):
+        self.ventana.destroy()
+        Principal()
     def verificar(self):
         nombre = self.entradas[0].get()
         user = self.entradas[1].get()
@@ -228,7 +253,7 @@ class Registrarse:
         contra = self.entradas[4].get()
 
 
-        AVerificar = User(name=nombre, nickname=user, email=email, password=contra)
+        AVerificar = User(name=nombre, nickname=user, email=email, _password=contra)
 
         if not(AVerificar.check_name()):
             messagebox.showinfo('Acceso incorrecto', 'Nombre no válido')
@@ -252,6 +277,7 @@ class Registrarse:
         else:
             Data.diccUsers[user] = AVerificar
             Data().guardar_usuarios()
+            Data().guardar_user_passw()
             messagebox.showinfo('Registro exitoso', 'Usuario registrado con éxito')
             self.ventana.destroy()
             Entrar(AVerificar)
@@ -322,7 +348,7 @@ class Entrar:
         # Botones
         self.botones = []
         self.nom_bot = ['Crear Inspiration','Mis Inspirations', 'Inspirations', 'Buscar persona']
-        self.listita =[self.escribir_boton, self.sdh, self.mostrar_insp,self.skjdf]
+        self.listita =[self.crear_inspiration, self.mostrar_mis_inspirations, self.mostrar_inspirations,self.buscar_personas]
         for i in range(4):
             self.boton = Button(self.frames[1],
                                 text=self.nom_bot[i],
@@ -340,19 +366,21 @@ class Entrar:
 
         mainloop()
 
-    def escribir_boton(self):
+    def crear_inspiration(self):
         self.ventana.destroy()
         Escribir(self.usuario)
 
-    def mostrar_insp(self):
+    def mostrar_inspirations(self):
         self.ventana.destroy()
-        MyInspirations(self.usuario)
+        ShowInspirations(self.usuario, False)
 
-    def sdh(self):
+    def mostrar_mis_inspirations(self):
+        self.ventana.destroy()
+        ShowInspirations(self.usuario, True)
+
+    def buscar_personas(self):
         pass
 
-    def skjdf(self):
-        pass
 class Escribir():
     def __init__(self, usuario):
 
@@ -374,7 +402,7 @@ class Escribir():
         self.img = self.img.resize((25, 25))
         self.cargar = ImageTk.PhotoImage(self.img)
         self.fondo = Label(self.ventana, image=self.cargar, bg='white')
-        self.fondo.pack(expand=True, fill='both', side='left')
+        self.fondo.pack(expand=True, fill='both', side='right')
         self.fondo.place(x=0, y=1)
 
         #boton
@@ -389,8 +417,22 @@ class Escribir():
         self.boton_publicar.pack(expand=True,side='right' )
         self.fondo.place(x=0, y=1)
 
+        self.retroceder = Button(self.ventana,
+                                 text='↩',
+                                 width=5,
+                                 font=('Times', 15),
+                                 bg='lightsalmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.pack(expand=True, side='right')
+        self.retroceder.place(x=0, y=1, sticky = 'w')
 
         mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
     def publicar(self):
         texto = self.texto.get("1.0", tkinter.END).strip()
         self.usuario.create_inspiration(texto)
@@ -398,8 +440,9 @@ class Escribir():
         self.ventana.destroy()
         Entrar(self.usuario)
 
-class MyInspirations:
-    def __init__(self, usuario):
+
+class ShowInspirations:
+    def __init__(self, usuario, mios=False):
         fondo = 'antiquewhite'
         self.usuario = usuario
 
@@ -411,84 +454,104 @@ class MyInspirations:
         self.scrollbar = Scrollbar(self.ventana)
         self.scrollbar.pack(side='right', fill='y')
 
-        # Crear un Canvas para crear un area en la que estara el texto
+        # Crear un Canvas para crear un área en la que estará el texto
         self.canvas = Canvas(self.ventana)
         self.canvas.pack(fill='both', expand=True)
 
-        # Crear un frame dentro del area donde se encuentra el textp
+        # Crear un frame dentro del área donde se encuentra el texto
         self.frame_textos = Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw') #Se crea una ventana en la posicion (0,0)  en la que colocaremos los textos
+        self.canvas.create_window((0, 0), window=self.frame_textos, anchor='nw')
 
-        if len(self.usuario.listaInspirations) == 0:
-            print('hjoalsj')
-            pass
-
+        if mios:
+            self.textos = self.usuario.listaInspirations
         else:
             self.textos = self.usuario.show_inspirations()
-            for inspiration in self.textos:
-                self.frame = LabelFrame(self.frame_textos, text=self.usuario)
-                self.frame.pack(pady=15, padx = 15)
 
-                self.texto = Label(self.frame,
-                                   text=inspiration,
-                                   font=('Times', 12),
-                                   bg=fondo,
-                                   fg='black',
-                                   padx=20,
-                                   width=45,
-                                   height=5)
-                self.texto.pack(fill='both', expand=True)
+        try:
+            if len(self.textos) == 0:
+                raise ValueError('No hay inspirations')
+            else:
+                self.textos = self.usuario.show_inspirations()
+                for inspiration in self.textos:
+                    InspirationInterfaz(self, inspiration, fondo)
+        except ValueError as e:
+            print(e)
 
-                self.boton = Button(self.frame,
-                                    text='ME GUSTA',
-                                    font=('Times', 9),
-                                    bg='antiquewhite' if self.usuario.comprobar_mg(inspiration) == False else 'tomato',
-                                    fg='black'
-                                    )
-                self.boton.pack(side='left')  # Empaquetar el botón en una línea separada
+        self.retroceder = Button(self.canvas,
+                                 text='↩',
+                                 width=2,
+                                 height=1,
+                                 font=('Times', 7),
+                                 bg='lightsalmon',
+                                 fg='#fff',
+                                 command=self.retroceder1)
+        self.retroceder.place(x=0, y=1)
 
-                self.boton2 = Button(self.frame,
-                                    text='COMENTAR',
+        mainloop()
+
+    def retroceder1(self):
+        self.ventana.destroy()
+        Entrar(self.usuario)
+
+
+class InspirationInterfaz:
+    def __init__(self, padre, inspiration, fondo):
+        self.padre = padre
+        self.inspiration = inspiration
+
+        self.frame = LabelFrame(self.padre.frame_textos, text=f'@{self.inspiration.user.nickname}')
+        self.frame.pack(pady=15, padx=20)
+
+        # Etiqueta para mostrar la fecha en la parte superior derecha
+        self.fecha_label = Label(self.frame,
+                                    text=inspiration.fecha.strftime('%H:%M    %m-%d'),
                                     font=('Times', 9),
                                     bg=fondo,
                                     fg='black')
-                self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
-        # Configurar el desplazamiento del canvas
-        self.canvas.config(yscrollcommand=self.scrollbar.set) #se configura el scrollbar para que funcione de forma vincuada al frame
-        self.scrollbar.config(command=self.canvas.yview) # Se configura el comando del scrollbar para que
-                                                         # esté vinculado al método yview() del canvas que permite el
-                                                         # desplazamiento vertical del frame canvas
+        self.fecha_label.pack(side='top', anchor='ne', padx=5, pady=5)
 
-        # Configurar la actualización del canvas cuando se modifica su tamaño
-        self.frame_textos.bind('<Configure>', self.config_tamaño_frame) #event = configure para que se modifique el frame canvas cuando se desplace verticalmenta
+        self.texto = Label(self.frame,
+                              text=inspiration.text,
+                              font=('Times', 12),
+                              bg=fondo,
+                              fg='black',
+                              padx=25,
+                              width=45,
+                              height=5)
+        self.texto.pack(fill='both', expand=True)
 
-        self.ventana.mainloop()
+        self.botonMg = Button(self.frame,
+                                 text='ME GUSTA',
+                                 font=('Times', 9),
+                                 bg='tomato' if self.padre.usuario in inspiration.likes else 'antiquewhite',
+                                 fg='black',
+                                 command=self.bt_me_gusta)
 
-    def config_tamaño_frame(self, event):
-        self.canvas.configure(scrollregion=self.canvas.bbox("all")) #para que todos los elementos del canvas tengan el mismo tamaño
+        self.labelMg = Label(self.frame,
+                                text=f'{len(inspiration.likes)}',
+                                font=('Times', 9),
+                                bg=fondo,
+                                fg='black')
+        self.labelMg.pack(side='left')
 
-    '''def megusta(self):
+        self.botonMg.pack(side='left')  # Empaquetar el botón en una línea separada
 
-        self.usuario.me_gusta()
+        self.boton2 = Button(self.frame,
+                                text='COMENTAR',
+                                font=('Times', 9),
+                                bg=fondo,
+                                fg='black')
+        self.boton2.pack(side='right')  # Empaquetar el botón en una línea separada
 
-    def cambiar_color(self):
-        if self.usuario.comprobar_mg() == False:
-            self.boton.configure(bg = 'tomato')
-
-        else:
-            self.boton = self.boton'''
+    def bt_me_gusta(self):
+        self.padre.usuario.me_gusta(self.inspiration)
+        self.botonMg.configure(bg='tomato' if self.padre.usuario in self.inspiration.likes else 'antiquewhite')
+        self.labelMg.configure(text=f'{len(self.inspiration.likes)}')
 
 
-Data().lectura_usuarios()
-print(Data.diccUsers['jord'].password)
+
 Principal()
-
-
-print(Data.diccUsers['jord'].listaInspirations[0].text)
-
-
-
 
 
 

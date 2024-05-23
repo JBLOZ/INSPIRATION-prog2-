@@ -47,22 +47,25 @@ class User:
             return False
 
     def __add__(self, other):
-        self.listaInspirations.append(other)
+        self.listaSiguiendo.append(other)
+        other.listaSiguiendo.append(self)
         Data.diccUsers[self.nickname] = self
+        Data.diccUsers[other.nickname] = other
         Data().guardar_usuarios()
 
 
     def __sub__(self, other):
-        self.listaInspirations.remove(other)
+        self.listaSiguiendo.remove(other)
+        other.listaSiguiendo.remove(self)
         Data.diccUsers[self.nickname] = self
+        Data.diccUsers[other.nickname] = other
         Data().guardar_usuarios()
 
 
     def follow(self, other):
         try:
             if other.nickname in self.listaSiguiendo:
-                pass
-              #  raise AlreadyFollowingError()
+                raise ex.AlreadyFollowingError()
             self.listaSiguiendo.append(other.nickname)
             other.listaSeguidores.append(self.nickname)
             Data.diccUsers[self.nickname] = self
@@ -100,7 +103,7 @@ class User:
             if inspiration not in unique_inspirations:
                 unique_inspirations.append(inspiration)
 
-        sorted_inspirations = sorted(unique_inspirations, key=lambda x: x.date_published)
+        sorted_inspirations = sorted(unique_inspirations, key=lambda x: x.fecha if x.fecha is not None else None)
 
         return sorted_inspirations
 
@@ -154,9 +157,13 @@ class Data:
 
 if __name__ == '__main__':
     Data().lectura_usuarios()
-    pepe = User('Pepe', 'pepe123', 'jadsjj', 'Aa123456@')
+    #Jordi = Data.diccUsers['jord']
+    #Alejandro = Data.diccUsers['aos24']
+    #print(Data.diccUsers['aos24'].password)
+    #Jordi.__add__(Alejandro)
+    nom = Data.diccUsers['jord']
+    print(nom.nickname)
 
-    print(User().search_user('pepe'))
 
 
 
